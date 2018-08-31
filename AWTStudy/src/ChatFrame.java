@@ -89,12 +89,26 @@ public class ChatFrame extends Frame {
 			component.setBackground(bg);
 		}
 	}
+	
+	
+	public void finish() {
+		setVisible(false);
+		dispose();
+		System.exit(0);
+	}
 
+	// 이벤트 연결
+	public void eventRegist() { 
+		addWindowListener(new ExitHandler(this));
+	}
+	
 	public static void main(String[] args) {
 		ChatFrame frame = new ChatFrame("코톡");
 		frame.setContents();
 		frame.setSize(400, 500);
 		frame.setCenter();
+		// 이벤트 등록
+		frame.eventRegist();
 		frame.setVisible(true);
 	}
 }
