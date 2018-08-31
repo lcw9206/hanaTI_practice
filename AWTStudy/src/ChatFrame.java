@@ -102,18 +102,36 @@ public class ChatFrame extends Frame {
 		System.exit(0);
 	}
 
-	// 이벤트 연결
-	public void eventRegist() {
+	// 이름있는 지역 내부 클래스
+	// 기존 멤버 내부클래스의 메모리 낭비 문제를 해결한 방법
+/*	public void eventRegist() {
+		class Exiter extends WindowAdapter {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				finish();
+			}
+		}
 		addWindowListener(new Exiter());
-	}
+	}*/
 
-	/** 멤버 내부클래스를 이용한 이벤트 처리 */
+	// 이름없는 지역 내부 클래스
+	public void eventRegist() {
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				finish();
+			}
+		});
+	}
+	
+	/** 멤버 내부클래스를 이용한 이벤트 처리 *//*
 	class Exiter extends WindowAdapter {
 		@Override
 		public void windowClosing(WindowEvent e) {
 			finish();
 		}
-	}
+	}*/
 
 	public static void main(String[] args) {
 		ChatFrame frame = new ChatFrame("코톡");
