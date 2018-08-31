@@ -11,7 +11,13 @@ import java.awt.Panel;
 import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+/**
+ * @author 이철우
+ *
+ */
 public class ChatFrame extends Frame {
 	Label serverL;
 	TextField serverTF, inputTF;
@@ -43,7 +49,7 @@ public class ChatFrame extends Frame {
 //		connectB.setForeground(Color.WHITE);
 
 //		connectB.setFont(new Font("궁서", Font.BOLD, 20));
-		
+
 		Panel northP = new Panel();
 		northP.setLayout(new BorderLayout());
 		northP.add(serverL, BorderLayout.WEST);
@@ -59,23 +65,23 @@ public class ChatFrame extends Frame {
 		add(messageTA, BorderLayout.CENTER);
 		add(userL, BorderLayout.EAST);
 		add(southP, BorderLayout.SOUTH);
-		
-		setLocation(100,100);
+
+		setLocation(100, 100);
 
 //		setColorAll(Color.BLUE);
 	}
 
 	public void setCenter() {
-		//		Runtime.getRuntime().exec(command); 팩토리 메서드
+		// Runtime.getRuntime().exec(command); 팩토리 메서드
 		Toolkit.getDefaultToolkit().beep();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		
+
 		int x = (dim.width - getSize().width) / 2;
 		int y = (dim.height - getSize().height) / 2;
 		setLocation(x, y);
-		
+
 	}
-	
+
 	private void setColorAll(Color bg) {
 		Component[] components = getComponents();
 //		밑의 component에는 Panel도 들어가 있으므로 한 번 더 들어가야한다.
@@ -89,8 +95,7 @@ public class ChatFrame extends Frame {
 			component.setBackground(bg);
 		}
 	}
-	
-	
+
 	public void finish() {
 		setVisible(false);
 		dispose();
@@ -98,10 +103,18 @@ public class ChatFrame extends Frame {
 	}
 
 	// 이벤트 연결
-	public void eventRegist() { 
-		addWindowListener(new ExitHandler(this));
+	public void eventRegist() {
+		addWindowListener(new Exiter());
 	}
-	
+
+	/** 멤버 내부클래스를 이용한 이벤트 처리 */
+	class Exiter extends WindowAdapter {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			finish();
+		}
+	}
+
 	public static void main(String[] args) {
 		ChatFrame frame = new ChatFrame("코톡");
 		frame.setContents();
