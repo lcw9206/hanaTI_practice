@@ -15,6 +15,7 @@ public class Account {
 	private int passwd;
 	private long restMoney;
 
+	// Default 생성자
 	public Account() {
 		this(null, null);
 	}
@@ -71,7 +72,6 @@ public class Account {
 	 * @throws AccountException
 	 */
 	public long deposit(long money) throws AccountException {
-
 		if (money <= 0) {
 			throw new AccountException("출금하고자 하고자 하는 금액은 음수일 수 없습니다.", -100);
 		}
@@ -88,7 +88,6 @@ public class Account {
 	 */
 	public long withdraw(long money) throws AccountException {
 		if (money <= 0) {
-			// 강제 예외발생 후, throws로 호출한 곳에 리턴.
 			throw new AccountException("출금하고자 하고자 하는 금액은 음수일 수 없습니다.", -1);
 		}
 		if (money > restMoney) {
@@ -100,7 +99,8 @@ public class Account {
 	}
 
 	/**
-	 * 입출금 계좌용 출력 메서드 줄맞춤을 Formatter 클래스 사용
+	 * 입출금 계좌용 출력 메서드 
+	 * 줄맞춤을 위해 Formatter 클래스를 사용합니다.
 	 */
 	@Override
 	public String toString() {

@@ -55,7 +55,7 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 기본 생성자
+	 *  Default 생성자
 	 */
 	public MainFrame() {
 		aTypeL = new Label("계좌종류");
@@ -65,7 +65,7 @@ public class MainFrame extends Frame {
 		inputMoneyL = new Label("입금금액", Label.CENTER);
 		outputMoneyL = new Label("대출금액");
 		accountsL = new Label("계좌목록", Label.LEFT);
-		// )이 짤려서 이스케이프 문자를 추가했습니다.
+		// )이 생략되어 이스케이프 문자 추가 
 		unitL = new Label("(단위 : 원\\)", Label.RIGHT);
 		blankL = new Label(" ");
 
@@ -96,7 +96,8 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * gridBagLayout을 기반으로한 GUI 세팅 메서드
+	 * GUI 세팅 메서드
+	 * gridBagLayout을 기준으로 GUI를 세팅합니다.
 	 */
 	public void bagsetContents() {
 		setLayout(gridBagLayout);
@@ -131,7 +132,8 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 컴포넌트 별 위치 지정 및 설정을 위한 add 메서드
+	 * 컴포넌트 설정 메서드
+	 * 컴포넌트별 위치, 길이 등의 설정을 세팅합니다.
 	 * 
 	 * @param component
 	 * @param gridx
@@ -152,7 +154,7 @@ public class MainFrame extends Frame {
 		gridBagConstraints.weighty = weighty;
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 
-		// TextField의 HORIZONTAL 적용 유무를 구별하기 위한 분기문
+		// TextField별 HORIZONTAL 적용 유무를 구별하기 위한 분기문
 		if (fill == true) {
 			gridBagConstraints.fill = gridBagConstraints.HORIZONTAL;
 		}
@@ -163,7 +165,8 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 테스트를 위한 데이터 세팅 메서드
+	 * 테스트 생성 메서드
+	 * 테스트 값을 생성합니다.
 	 */
 	public void setExample() {
 		aManager.add(new Account("1111-2222-3333", "이철우", 1234, 1000));
@@ -173,9 +176,10 @@ public class MainFrame extends Frame {
 		aManager.add(new MinusAccount("1111-2222-7777", "최철우", 1234, 50000, 50000));
 		aManager.add(new MinusAccount("1111-2222-8888", "최철우", 1234, 0, 100000));
 	}
-	
+
 	/**
-	 * 동적으로 GUI의 생성 위치를 조정하기 위한 메서드
+	 * GUI 생성 위치 조정 메서드
+	 * 동적으로 GUI의 생성 위치를 중앙으로 조정합니다.
 	 */
 	public void setCenter() {
 		Toolkit.getDefaultToolkit().beep();
@@ -187,7 +191,8 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * TextArea의 최상단 고정 메뉴 출력을 위한 메서드 출력 메서드의 최상단에서 호출
+	 * 메뉴바 출력 메서드
+	 * 출력이 필요한 이벤트에 선언되어 TextArea의 최상단에 메뉴를 출력합니다.
 	 */
 	public void topMenu() {
 		contentTA.setText("");
@@ -197,188 +202,221 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 종료버튼 활성화를 위한 메서드
+	 * 계좌종류 구분 메서드
+	 * 계좌의 종류에 따라 대출금액 필드를 활성/비활성화 처리합니다.
+	 * getSelectedIndex를 이용해 분류합니다. 
 	 */
-	public void finish() {
+	public void selectType() {
+		// TextArea 초기화
+		contentTA.setText("");
+		if (aTypeC.getSelectedIndex() == 1) {
+			outputMoneyTF.setEnabled(false);
+		} else {
+			outputMoneyTF.setEnabled(true);
+		}
+	}
+
+	/**
+	 * 계좌조회 메서드 
+	 * 입력된 계좌번호가 없거나, 입력된 계좌번호로 조회한 결과가 없을 경우, 예외처리로 넘어갑니다.
+	 */
+	public void getAccount() {
+		Account account = aManager.get(aNumTF.getText());
+		if (!(aNumTF.getText().trim().equals("") || account == null)) {
+			topMenu();
+			contentTA.append(account.toString());
+		} else {
+			try {
+				throw new AccountException("해당 번호로 조회되는 계좌가 없습니다.", -200);
+			} catch (AccountException e1) {
+				e1.printStackTrace();
+				contentTA.setText("");
+				JOptionPane.showMessageDialog(null, "해당 번호로 조회되는 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	/**
+	 * 계좌삭제 메서드
+	 * 입력된 계좌번호가 없거나, 입력된 계좌번호로 조회한 결과가 없을 경우, 삭제를 진행하지 않고 예외처리로 넘어갑니다.
+	 */
+	public void removeAccount() {
+		Account account = aManager.get(aNumTF.getText());
+		if (!(aNumTF.getText().trim().equals("") || account == null)) {
+			aManager.remove(aNumTF.getText());
+			JOptionPane.showMessageDialog(null, "해당계좌가 삭제되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
+			listAll();
+		} else {
+			try {
+				throw new AccountException("삭제하려는 계좌가 존재하지 않습니다.", -500);
+			} catch (AccountException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "삭제하려는 계좌가 존재하지 않습니다.", "알림", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	
+	/**
+	 * 계좌검색 메서드 
+	 * 입력된 예금주명이 없거나, 입력된 예금주명으로 조회한 결과가 없을경우 예외처리로 넘어갑니다.
+	 * 검색 값이 있을 경우, 반복문을 통해 값을 출력합니다.
+	 */
+	public void searchAccount() {
+		List<Account> list = aManager.search(memberNameTF.getText());
+		if (!(memberNameTF.getText().trim().equals("") || list == null)) {
+			topMenu();
+			for (int i = 0; i < list.size(); i++) {
+				contentTA.append(list.get(i).toString());
+			}
+		} else {
+			try {
+				throw new AccountException("해당 이름으로 조회되는 계좌가 없습니다.", -300);
+			} catch (AccountException e1) {
+				e1.printStackTrace();
+				contentTA.setText("");
+				JOptionPane.showMessageDialog(null, "해당 이름으로 조회되는 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	/**
+	 * 계좌생성 메서드
+	 * 계좌생성에 필요한 값이 하나라도 비어있을 경우 예외처리로 넘어갑니다.
+	 * 값이 모두 입력되어있을 경우, 계좌종류에 따라 객체를 생성하며, 입력된 금액이 없으면 0으로 초기화됩니다.
+	 */
+	public void addAccount() {
+		if (!(aNumTF.getText().trim().equals("") || memberNameTF.getText().trim().equals("")
+				|| passTF.getText().trim().equals(""))) {
+			if (aTypeC.getSelectedIndex() == 1) {
+				Account addAccount = new Account(aNumTF.getText(), memberNameTF.getText(),
+						Integer.parseInt(passTF.getText()),
+						(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0);
+				aManager.add(addAccount);
+				listAll();
+				return;
+			} else if (aTypeC.getSelectedIndex() == 2) {
+				MinusAccount addMAccount = new MinusAccount(aNumTF.getText(), memberNameTF.getText(),
+						Integer.parseInt(passTF.getText()),
+						(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0,
+						(!outputMoneyTF.getText().trim().equals("")) ? Long.parseLong(outputMoneyTF.getText()) : 0);
+				aManager.add(addMAccount);
+				listAll();
+				return;
+			} else {
+				JOptionPane.showMessageDialog(null, "계좌 종류를 선택 후, 생성해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
+				contentTA.setText("");
+			}
+		} else {
+			try {
+				throw new AccountException("비어있는 항목이 있습니다. 다시 확인해주세요.", -400);
+			} catch (AccountException e1) {
+				e1.printStackTrace();
+				contentTA.setText("");
+				JOptionPane.showMessageDialog(null, "비어있는 항목이 있습니다. 다시 확인해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	
+	/**
+	 *  전체 계좌 조회 메서드
+	 *  계좌 정보가 담겨있는 aManager의 size를 측정해 0일 경우, 예외처리를 진행합니다.
+	 */
+	public void listAll() {
+		if (aManager.list().size() != 0) {
+			topMenu();
+			for (int i = 0; i < aManager.list().size(); i++) {
+				contentTA.append(aManager.list().get(i).toString());
+			}
+		} else {
+			try {
+				throw new AccountException("현재 등록된 계좌가 없습니다.", -100);
+			} catch (AccountException e1) {
+				e1.printStackTrace();
+				contentTA.setText("");
+				JOptionPane.showMessageDialog(null, "현재 등록된 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	/**
+	 * 종료 메서드
+	 * GUI 상단의 X를 눌렀을 때 종료되도록 합니다.
+	 */
+	public void exit() {
 		setVisible(false);
 		dispose();
 		System.exit(0);
 	}
 
 	/**
-	 * 이름없는 지역 클래스를 이용한 이벤트 처리 메서드 핵심 부분
+	 * 이름없는 지역 클래스를 이용한 이벤트 처리 메서드
+	 * 기존 로직을 메서드로 분리했습니다.
 	 */
 	public void eventRegist() {
-		addWindowListener(new WindowAdapter() {
-			/**
-			 * 종료버튼 활성화를 위한 이벤트 처리
-			 */
+
+		aTypeC.addItemListener(new ItemListener() {
 			@Override
-			public void windowClosing(WindowEvent e) {
-				finish();
+			public void itemStateChanged(ItemEvent e) {
+				selectType();
 			}
 		});
 
+		aNumCheckB.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				getAccount();
+			}
+		});
+
+		deleteB.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				removeAccount();
+			}
+		});
+
+		memberNameCheckB.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				searchAccount();
+			}
+		});
+
+		registB.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				addAccount();
+			}
+		});
+
+		viewB.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				listAll();
+			}
+		});
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exit();
+			}
+		});
+
+		// 비밀번호 입력 시, '*'로 입력되게 합니다.
 		passTF.addKeyListener(new KeyAdapter() {
-			/**
-			 * 비밀번호 입력 시, '*'로 입력되도록 하는 이벤트 처리
-			 */
 			@Override
 			public void keyPressed(KeyEvent e) {
 				passTF.setEchoChar('*');
 			}
 		});
-
-		aTypeC.addItemListener(new ItemListener() {
-			/**
-			 * 계좌 종류 선택에 따라 대출금액 TextField를 활성화 혹은 비활성화 한다. 
-			 */
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				contentTA.setText("");
-				if (aTypeC.getSelectedIndex() == 1) {
-					outputMoneyTF.setEnabled(false);
-				} else {
-					outputMoneyTF.setEnabled(true);
-				}
-			}
-		});
-
-		viewB.addMouseListener(new MouseAdapter() {
-			/**
-			 * 전체조회 버튼을 눌렀을 때의 이벤트 처리 계좌정보가 담겨있는 list의 길이가 0일 경우 예외처리 진행 아닐 경우,
-			 * TextArea에 list를 출력
-			 */
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (aManager.list().size() != 0) {
-					topMenu();
-					for (int i = 0; i < aManager.list().size(); i++) {
-						contentTA.append(aManager.list().get(i).toString());
-					}
-				} else {
-					try {
-						throw new AccountException("현재 등록된 계좌가 없습니다.", -100);
-					} catch (AccountException e1) {
-						e1.printStackTrace();
-						contentTA.setText("");
-						JOptionPane.showMessageDialog(null, "현재 등록된 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
-
-		aNumCheckB.addMouseListener(new MouseAdapter() {
-			/**
-			 * 조회 버튼을 눌렀을 때의 이벤트 처리 계좌번호에 입력값이 없거나, 입력된 계좌번호로 조회한 결과가 없을 경우 예외처리 진행
-			 */
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Account account = aManager.get(aNumTF.getText());
-				if (!(aNumTF.getText().trim().equals("") || account == null)) {
-					topMenu();
-					contentTA.append(account.toString());
-				} else {
-					try {
-						throw new AccountException("해당 번호로 조회되는 계좌가 없습니다.", -200);
-					} catch (AccountException e1) {
-						e1.printStackTrace();
-						contentTA.setText("");
-						JOptionPane.showMessageDialog(null, "해당 번호로 조회되는 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
-
-		memberNameCheckB.addMouseListener(new MouseAdapter() {
-			/**
-			 * 검색 버튼을 눌렀을 때의 이벤트 처리 예금주명에 입력값이 없거나, 입력된 예금주명으로 조회한 결과가 없을 경우 예외처리 진행
-			 */
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				List<Account> list = aManager.search(memberNameTF.getText());
-				if (!(memberNameTF.getText().trim().equals("") || list == null)) {
-					topMenu();
-					for (int i = 0; i < list.size(); i++) {
-						contentTA.append(list.get(i).toString());
-					}
-				} else {
-					try {
-						throw new AccountException("해당 이름으로 조회되는 계좌가 없습니다.", -300);
-					} catch (AccountException e1) {
-						e1.printStackTrace();
-						contentTA.setText("");
-						JOptionPane.showMessageDialog(null, "해당 이름으로 조회되는 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
-
-		registB.addMouseListener(new MouseAdapter() {
-			/**
-			 * 신규등록 버튼을 눌렀을 때의 이벤트 처리 등록에 필요한 계좌번호, 예금주명, 비밀번호, 그리고 동일 계좌번호의 유무로 유효성 검사를 진행해
-			 * 예외처리 이 후, 계좌타입에 따라 분기 후, 객체 생성 및 종료
-			 */
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (!(aNumTF.getText().trim().equals("") || memberNameTF.getText().trim().equals("")
-						|| passTF.getText().trim().equals(""))) {
-					topMenu();
-					if (aTypeC.getSelectedIndex() == 1) {
-						Account addAccount = new Account(aNumTF.getText(), memberNameTF.getText(),
-								Integer.parseInt(passTF.getText()),
-								(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0);
-						aManager.add(addAccount);
-						contentTA.append(addAccount.toString());
-						return;
-					} else if (aTypeC.getSelectedIndex() == 2) {
-						MinusAccount addMAccount = new MinusAccount(aNumTF.getText(), memberNameTF.getText(),
-								Integer.parseInt(passTF.getText()),
-								(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0,
-								(!outputMoneyTF.getText().trim().equals("")) ? Long.parseLong(outputMoneyTF.getText())
-										: 0);
-						aManager.add(addMAccount);
-						contentTA.append(addMAccount.toString());
-						return;
-					} else {
-						JOptionPane.showMessageDialog(null, "계좌 종류를 선택 후, 생성해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
-					}
-				} else {
-					try {
-						throw new AccountException("비어있는 항목이 있습니다. 다시 확인해주세요.", -400);
-					} catch (AccountException e1) {
-						e1.printStackTrace();
-						JOptionPane.showMessageDialog(null, "비어있는 항목이 있습니다. 다시 확인해주세요.", "알림",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
-
-		deleteB.addMouseListener(new MouseAdapter() {
-			/**
-			 * 삭제 버튼을 눌렀을 때의 이벤트 처리 계좌번호에 입력값이 없거나, 조회되는 계좌가 없을 경우 예외처리 진행
-			 */
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Account account = aManager.get(aNumTF.getText());
-				if (!(aNumTF.getText().trim().equals("") || account == null)) {
-					aManager.remove(aNumTF.getText());
-					JOptionPane.showMessageDialog(null, "해당계좌가 삭제되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					try {
-						throw new AccountException("삭제하려는 계좌가 존재하지 않습니다.", -500);
-					} catch (AccountException e1) {
-						e1.printStackTrace();
-						JOptionPane.showMessageDialog(null, "삭제하려는 계좌가 존재하지 않습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
 	}
 
 	/**
-	 * 세팅 관련 메서드들을 모아놓은 메서드
+	 * 최종 세팅 메서드
+	 * 세팅에 필요한 메서드들을 모아 일괄적으로 처리합니다. 
 	 */
 	public void setUI() {
 		MainFrame practice = new MainFrame();

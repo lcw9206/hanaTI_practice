@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 public class AccountManagerMap {
 	private Hashtable<String, Account> accounts;
 
+	// Default 생성자
 	public AccountManagerMap() {
 		this(10);
 	}
@@ -23,7 +24,8 @@ public class AccountManagerMap {
 	}
 
 	/**
-	 * 계좌 생성 메서드 containsKey 메서드를 이용해 중복 계좌 검색 후, 계좌 생성 Swing의 요소를 이용한 문구 출력
+	 * 계좌 생성 메서드 
+	 * containsKey 메서드를 이용해 중복 계좌 검색 후, 계좌 생성 Swing의 요소를 이용해 문구를 출력합니다.
 	 * 
 	 * @param account
 	 */
@@ -36,12 +38,14 @@ public class AccountManagerMap {
 			} catch (AccountException e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(null, "이미 존재하는 계좌번호입니다.", "알림", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 		}
 	}
 
 	/**
 	 * 계좌 리스트 반환 메서드
+	 * Account 객체를 List로 받아 Enumeration을 이용해 계좌 목록들을 list에 담아 반환합니다.
 	 * 
 	 * @return Account[]
 	 */
@@ -55,7 +59,8 @@ public class AccountManagerMap {
 	}
 
 	/**
-	 * 계좌 번호를 이용한 계좌 검색 메서드 containsKey 메서드를 이용해 계좌 유무 파악
+	 * 계좌 번호를 이용한 계좌 검색 메서드 
+	 * containsKey 메서드를 이용해 계좌 유무를 파악합니다.
 	 * 
 	 * @param accountNum
 	 * @return Account
@@ -69,6 +74,7 @@ public class AccountManagerMap {
 
 	/**
 	 * 예금자명을 이용한 계좌 검색 메서드
+	 * 계좌 리스트 반환 메서드와 동일한 로직에 while문 안에서 예금자명을 기준으로 list를 작성합니다.
 	 * 
 	 * @param accountOwner
 	 * @return Account[]
@@ -86,7 +92,8 @@ public class AccountManagerMap {
 	}
 
 	/**
-	 * 계좌 삭제 메서드 containsKey 메서드를 이용해 계좌 유무 악
+	 * 계좌 삭제 메서드 
+	 * containsKey 메서드를 이용해 계좌 유무를 파악합니다.
 	 * 
 	 * @param accountNum
 	 * @return boolean

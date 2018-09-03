@@ -35,7 +35,8 @@ public class MinusAccount extends Account {
 	}
 
 	/**
-	 * 마이너스 계좌용 출력 메서드 줄맞춤을 위한 Formatter 클래스 사용
+	 * 마이너스 계좌용 출력 메서드 
+	 * 줄맞춤을 위해 Formatter 클래스 사용합니다.
 	 * 
 	 * @return String
 	 */
