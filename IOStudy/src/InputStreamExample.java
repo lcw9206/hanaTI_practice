@@ -9,7 +9,7 @@ public class InputStreamExample {
 	public static void main(String[] args) {
 		InputStream in = null;
 
-		// 리소스때문에 IO에는 가장 많은 예외처리가 적용되어 있다.
+		// 리소스 문제로 IO에는 가장 많은 예외처리가 적용되어 있다.
 		try {
 			in = new FileInputStream(path);
 			// 읽기 전, 바이트가 몇 개 있는지 확인
