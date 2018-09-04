@@ -14,9 +14,10 @@ public class BufferedInputStreamExample {
 		fin = new FileInputStream(path);
 		
 		// Filter Stream
+		// default = 512바이트 배열을 갖고 있다. 
 		BufferedInputStream in = null;
 		// 땡겨온 물을 사용한다. 데이터 임의 접근이 가능하다.
-		in = new BufferedInputStream(fin); // default = 512바이트 배열 
+		in = new BufferedInputStream(fin);  
 		in.read();
 		System.out.println(in.read());
 		in.read();
