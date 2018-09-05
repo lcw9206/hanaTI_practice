@@ -28,7 +28,7 @@ public class InputStreamExample {
 //			읽을 데이터가 없을 경우, -1이 된다.
 			int count = 0;
 			while ((count = in.read(buffer)) != -1) {
-				System.out.println(count);
+				System.out.println((char)count);
 			}
 
 			// 위에서 다 읽었기때문에 0이된다.
