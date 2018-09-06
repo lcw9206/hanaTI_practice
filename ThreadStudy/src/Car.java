@@ -15,7 +15,7 @@ public class Car extends Thread {
 		
 		// 각각의 쓰레드이므로 예외처리에서 throws 불가능	
 		try {
-			Thread.sleep(random.nextInt(500));
+			Thread.sleep(random.nextInt(200));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
