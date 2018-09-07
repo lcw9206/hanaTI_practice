@@ -16,40 +16,41 @@ public class ServerSocketExample {
 		Socket socket = null;
 		InputStream in = null;
 		OutputStream out = null;
-		
+
 		try {
 			// 서버소켓 연결
 			ServerSocket serverSocket = new ServerSocket(PORT);
 			System.out.println(PORT + "포트에서 서버 실행");
-			
-			while(running) {
+
+			while (running) {
 				// 소켓이 연결되지 않으면 accept 메서드에서 머물러있는다.
 				socket = serverSocket.accept();
 				System.out.println(socket.getInetAddress() + " 클라이언트가 연결해옴");
 				in = socket.getInputStream();
 				out = socket.getOutputStream();
 //				
-				int data = in.read();
+//				int data = in.read();
 //				System.out.println("수신 데이터 : " + data);
-				out.write(data);
-				
+//				out.write(data);
+
 				PrintWriter pw = new PrintWriter(out, true);
 				// 브릿지 삽입
-				BufferedReader br = new BufferedReader(new InputStreamReader(in, "utf-8"));
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				boolean stop = false;
 				
-				String clientMesseage = br.readLine();
-				System.out.println("클라이언트 메세지 : " + clientMesseage);
-				
-//				에코 서버 => 받은 것을 다시 되돌려주는 기본서버 
-				pw.println(clientMesseage);
-				
+				while (!stop) {
+					String clientMesseage = br.readLine();
+					System.out.println("클라이언트 메세지 : " + clientMesseage); 
+					if (clientMesseage.equalsIgnoreCase("quit")) {
+						break;
+					}
+					pw.println(clientMesseage);
+				}
 //				pw.close();
 //				br.close();
 				socket.close();
 			}
-			
-			
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
