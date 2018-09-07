@@ -1,7 +1,10 @@
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
@@ -12,8 +15,8 @@ import java.net.Socket;
  */
 public class SocketExample {
 //	public static final String DOMAIN = "127.0.0.1";
-//	public static final String DOMAIN = "localhost";
-	public static final String DOMAIN = "192.168.0.123";
+	public static final String DOMAIN = "localhost";
+//	public static final String DOMAIN = "192.168.0.123";
 	public static final int PORT = 7777;
 	
 	public static void main(String[] args) {
@@ -30,13 +33,19 @@ public class SocketExample {
 			// 바이트를 지지고 볶아 맞춤형으로 데이터를 가공한다.
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
-			out.write(10);
+//			out.write(10);
+//			
+//			System.out.println("서버에 데이터 전송.");
+//			int data = in.read();
+//			System.out.println("수신한 데이터 : " + data);
 			
-			BufferedInputStream bin = new BufferedInputStream(in);
+			PrintWriter pw = new PrintWriter(out, true);
+			// 브릿지 삽입
+			BufferedReader br = new BufferedReader(new InputStreamReader(in, "utf-8"));
 			
-			System.out.println("서버에 데이터 전송.");
-			int data = in.read();
-			System.out.println("수신한 데이터 : " + data);
+			pw.println("안녕하세요. 서버님");
+			String serverMessage = br.readLine();
+			System.out.println("서버 메세지 : " + serverMessage);
 			
 		} catch (IOException e) {
 			System.out.println("서버를 연결할 수 없습니다.");
