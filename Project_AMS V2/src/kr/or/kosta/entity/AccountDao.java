@@ -19,12 +19,12 @@ public class AccountDao {
 	private static final int RECORD_COUNT_LENGTH = 5;
 
 	/** 레코드(친구 이름,나이,몸무게,전화번호) 저장을 위한 컬럼별 사이즈 고정 */
-	private static final int A_NUM_LENGTH = 30; // 이름(10바이트)
-	private static final int PASS_LENGTH = 4; // 몸무게(8바이트)
-	private static final int RESTMONEY_LENGTH = 8; // 전화번호(26바이트)
-	private static final int A_OWNER_LENGTH = 10; // 나이(4바이트)
-	private static final int OUTPUTMONEY_LENGTH = 8; // 전화번호(26바이트)
-	/** 친구정보 저장을 위한 레코드 사이즈 : 60바이트 */
+	private static final int A_NUM_LENGTH = 30; // 계좌번호(30바이트)
+	private static final int PASS_LENGTH = 4; // 비밀번호(4바이트)
+	private static final int RESTMONEY_LENGTH = 8; // 보유금액(8바이트)
+	private static final int A_OWNER_LENGTH = 10; // 예금주명(10바이트)
+	private static final int OUTPUTMONEY_LENGTH = 8; // 대출금액(8바이트)
+	/** 계좌정보 저장을 위한 레코드 사이즈 : 60바이트 */
 	public static final int RECORD_LENGTH = A_NUM_LENGTH + A_OWNER_LENGTH + PASS_LENGTH + RESTMONEY_LENGTH
 			+ OUTPUTMONEY_LENGTH;
 
@@ -59,11 +59,10 @@ public class AccountDao {
 	 */
 	public void add(Account account) throws IOException, AccountException {
 		// 계좌번호로 계좌검색을 진행하는 aSearch 메서드를 이용해 유효성 검사를 진행합니다.
-		if(aSearch(account.getAccountNum())!=null) {
-			JOptionPane.showMessageDialog(null, "계좌번호가 중복되었습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-			throw new AccountException("존재하는 계좌입니다. 계좌번호를 확인하세요", -700);
+		if(accountSearch(account.getAccountNum()) != null) {
+			throw new AccountException("이미 존재하는 계좌입니다. 계좌번호를 확인하세요", 0);
 		}
-		
+
 		String aNum = account.getAccountNum();
 		String aOwner = account.getAccountOwner();
 		int passwd = account.getPasswd();
@@ -154,7 +153,7 @@ public class AccountDao {
 			return account;
 			// outputMoney = -1 : 마이너스계좌를 생성하며 대출금액을 적지 않았을 시 초기값
 		} else if (outputMoney == -1) {
-			mAccount = new MinusAccount(aNum, aOwner, passwd, restMoney - 1, 0);
+			mAccount = new MinusAccount(aNum, aOwner, passwd, restMoney, 0);
 			return mAccount;
 			// 위의 두 경우를 제외한 값이 들어왔을 경우
 		} else {
@@ -172,7 +171,7 @@ public class AccountDao {
 	 * @return list
 	 * @throws IOException
 	 */
-	public List<Account> search(String accountOwner) throws IOException {
+	public List<Account> nameSearch(String accountOwner) throws IOException {
 		List<Account> list = new ArrayList<Account>();
 		List<Account> lists = listAll();
 		for (Account account : lists) {
@@ -190,15 +189,19 @@ public class AccountDao {
 	 * @param accountNum
 	 * @return list or null
 	 * @throws IOException
+	 * @throws AccountException 
 	 */
-	public Account aSearch(String accountNum) throws IOException {
+	public Account accountSearch(String accountNum) throws IOException, AccountException {
 		List<Account> lists = listAll();
+		Account account = null;
+		
 		for (int i = 0; i < lists.size(); i++) {
 			if (accountNum.trim().equals(lists.get(i).getAccountNum().trim())) {
-				return lists.get(i);
+				account = lists.get(i);
+				return account;
 			}
 		}
-		return null;
+		return account;	
 	}
 	
 
@@ -214,9 +217,10 @@ public class AccountDao {
 		String aOwner = removeAccount.getAccountOwner();
 		int passwd = removeAccount.getPasswd();
 		long restMoney = removeAccount.getRestMoney();
-		long outputMoney;
+		long outputMoney = 0;
 
 		// 입력받은 객체의 형에 따라 대출금액을 설정합니다. 
+		
 		if (removeAccount instanceof MinusAccount) {
 			outputMoney = ((MinusAccount) removeAccount).getBorrowMoney();
 		} else {

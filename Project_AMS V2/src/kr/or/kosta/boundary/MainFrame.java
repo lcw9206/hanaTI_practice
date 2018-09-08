@@ -36,6 +36,10 @@ import kr.or.kosta.entity.MinusAccount;
  * 
  * @author 이철우
  */
+/**
+ * @author 이철우
+ *
+ */
 public class MainFrame extends Frame {
 	Label aTypeL, aNumL, memberNameL, passL, inputMoneyL, outputMoneyL, accountsL, unitL, blankL;
 	Choice aTypeC;
@@ -100,8 +104,7 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * GUI 세팅 메서드 
-	 * gridBagLayout을 기준으로 GUI를 세팅합니다.
+	 * GUI 세팅 메서드 gridBagLayout을 기준으로 GUI를 세팅합니다.
 	 */
 	public void bagsetContents() {
 		setLayout(gridBagLayout);
@@ -136,8 +139,7 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 컴포넌트 설정 
-	 * 메서드 컴포넌트별 위치, 길이 등의 설정을 세팅합니다.
+	 * 컴포넌트 설정 메서드 컴포넌트별 위치, 길이 등의 설정을 세팅합니다.
 	 * 
 	 * @param component
 	 * @param gridx
@@ -182,8 +184,8 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 메뉴바 출력 메서드 
-	 * 출력이 필요한 이벤트에 선언되어 TextArea의 최상단에 메뉴를 출력합니다.
+	 * 메뉴바 출력 
+	 * 메서드 출력이 필요한 이벤트에 선언되어 TextArea의 최상단에 메뉴를 출력합니다.
 	 */
 	public void topMenu() {
 		contentTA.setText("");
@@ -193,9 +195,25 @@ public class MainFrame extends Frame {
 	}
 
 	/**
-	 * 계좌종류 구분 
-	 * 메서드 계좌의 종류에 따라 대출금액 필드를 활성/비활성화 처리합니다. 
-	 * getSelectedIndex를 이용해 분류합니다.
+	 * 다이얼로그 세팅 메서드 
+	 * 메세지, 메세지 타입을 매개변수로 받아 다이얼로그를 생성합니다. 
+	 * type이 0이면 Error, 1일 경우 Information입니다.
+	 * 
+	 * @param message
+	 * @param type
+	 */
+	public void setDialog(String message, int type) {
+		if (type == 0) {
+			JOptionPane.showMessageDialog(null, message, "알림", JOptionPane.ERROR_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(null, message, "알림", JOptionPane.INFORMATION_MESSAGE);
+		}
+
+	}
+
+	/**
+	 * 계좌종류 구분 메서드 
+	 * 계좌의 종류에 따라 대출금액 필드를 활성/비활성화 처리합니다. getSelectedIndex를 이용해 분류합니다.
 	 */
 	public void selectType() {
 		// TextArea 초기화
@@ -206,24 +224,28 @@ public class MainFrame extends Frame {
 			outputMoneyTF.setEnabled(true);
 		}
 	}
-
+	
 	/**
 	 * 계좌삭제 메서드 
 	 * 입력된 계좌번호가 없거나, 입력된 계좌번호로 조회한 결과가 없을 경우, 삭제를 진행하지 않고 예외처리로 넘어갑니다.
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
+	 * @throws AccountException 
 	 */
-	public void removeAccount() throws IOException {
+	public void removeAccount() throws IOException, AccountException {
 		if (!(aNumTF.getText().trim().equals(""))) {
-			aDao.remove(aNumTF.getText());
-			JOptionPane.showMessageDialog(null, "해당계좌가 삭제되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
-			listAll();
+			if(aDao.accountSearch(aNumTF.getText().trim()) != null) {
+				aDao.remove(aNumTF.getText().trim());
+				setDialog("해당 계좌가 삭제되었습니다.", 1);
+				listAll();
+			} else {
+				throw new AccountException("삭제하려는 계좌가 존재하지 않습니다", 0);
+			}
 		} else {
 			try {
-				throw new AccountException("삭제하려는 계좌번호를 제대로 입력해주세요.", -500);
+				throw new AccountException("삭제하려는 계좌번호를 제대로 입력해주세요.", 0);
 			} catch (AccountException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(null, "삭제하려는 계좌번호를 제대로 입력해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -233,48 +255,49 @@ public class MainFrame extends Frame {
 	 * 입력된 계좌번호가 없거나, 입력된 계좌번호로 조회한 결과가 없을 경우, 예외처리로 넘어갑니다.
 	 * 
 	 * @throws IOException
+	 * @throws AccountException
 	 */
-	public void readAccount() throws IOException {
+	public void readAccount() throws IOException, AccountException {
 		if (!(aNumTF.getText().trim().equals(""))) {
-			Account getAccount = null;
-			getAccount = aDao.aSearch(aNumTF.getText());
-			if (getAccount == null) {
-				JOptionPane.showMessageDialog(null, "계좌번호를 찾을 수 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-				return;
+			if (aDao.accountSearch(aNumTF.getText()) == null) {
+				throw new AccountException("해당 계좌가 존재하지 않습니다.", 0);
 			}
 			topMenu();
-			contentTA.append(getAccount.toString());
+			contentTA.append(aDao.accountSearch(aNumTF.getText()).toString());
 		} else {
 			try {
-				throw new AccountException("계좌번호를 제대로 입력해주세요.", -500);
+				throw new AccountException("계좌번호를 입력해주세요.", 0);
 			} catch (AccountException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(null, "계좌번호를 제대로 입력해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
 				contentTA.setText("");
 			}
 		}
 	}
-	
+
 	/**
 	 * 계좌검색 메서드 
-	 * 입력된 예금주명이 없거나, 입력된 예금주명으로 조회한 결과가 없을경우 예외처리로 넘어갑니다. 
-	 * 검색 값이 있을 경우, 반복문을 통해 값을 출력합니다.
+	 * 입력된 예금주명이 없거나, 입력된 예금주명으로 조회한 결과가 없을경우 예외처리로 넘어갑니다. 검색 값이 있을 경우,
+	 * 반복문을 통해 값을 출력합니다.
 	 * 
 	 * @throws IOException
+	 * @throws AccountException
 	 */
-	public void searchAccount() throws IOException {
+	public void searchAccount() throws IOException, AccountException {
 		if (!(memberNameTF.getText().trim().equals(""))) {
-			List<Account> searchAccount = aDao.search(memberNameTF.getText());
-			topMenu();
-			for (Account account : searchAccount) {
-				contentTA.append(account.toString());
+			List<Account> searchAccount = aDao.nameSearch(memberNameTF.getText());
+			if (!searchAccount.isEmpty()) {
+				topMenu();
+				for (Account account : searchAccount) {
+					contentTA.append(account.toString());
+				}
+			} else {
+				throw new AccountException("예금주명의 계좌가 존재하지 않습니다.", 0);
 			}
 		} else {
 			try {
-				throw new AccountException("예금주명을 입력해주세요.", -500);
+				throw new AccountException("예금주명을 입력해주세요.", 0);
 			} catch (AccountException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(null, "예금주명을 입력해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
 				contentTA.setText("");
 			}
 		}
@@ -282,48 +305,40 @@ public class MainFrame extends Frame {
 
 	/**
 	 * 계좌생성 메서드 
-	 * 계좌생성에 필요한 값이 하나라도 비어있을 경우 예외처리로 넘어갑니다. 
-	 * 값이 모두 입력되어있을 경우, 계좌종류에 따라 객체를 생성하며, 입력된 금액이 없으면 0으로 초기화됩니다.
+	 * 계좌생성에 필요한 값이 하나라도 비어있을 경우 예외처리로 넘어갑니다. 값이 모두 입력되어있을 경우, 계좌종류에 따라 객체를
+	 * 생성하며, 입력된 금액이 없으면 0으로 초기화됩니다.
 	 * 
 	 * @throws IOException
-	 * @throws AccountException 
+	 * @throws AccountException
 	 */
 	public void addAccount() throws IOException, AccountException {
-		if (!(aNumTF.getText().trim().equals("") || memberNameTF.getText().trim().equals("")
+		if ((aNumTF.getText().trim().equals("") || memberNameTF.getText().trim().equals("")
 				|| passTF.getText().trim().equals(""))) {
-			if (aTypeC.getSelectedIndex() == 1) {
-				Account addAccount = new Account(aNumTF.getText(), memberNameTF.getText(),
-						Integer.parseInt(passTF.getText()),
-						(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0);
-				aDao.add(addAccount);
-				JOptionPane.showMessageDialog(null, "입출금 계좌를 성공적으로 개설했습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
-				return;
-			} else if (aTypeC.getSelectedIndex() == 2) {
-				MinusAccount addMAccount = new MinusAccount(aNumTF.getText(), memberNameTF.getText(),
-						Integer.parseInt(passTF.getText()),
-						(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0,
-						(!outputMoneyTF.getText().trim().equals("")) ? Long.parseLong(outputMoneyTF.getText()) : -1);
-				aDao.add(addMAccount);
-				JOptionPane.showMessageDialog(null, "마이너스 계좌를 성공적으로 개설했습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
-				return;
-			} else {
-				JOptionPane.showMessageDialog(null, "계좌 종류를 선택 후, 생성해주세요.", "알림", JOptionPane.ERROR_MESSAGE);
-				contentTA.setText("");
-			}
+			throw new AccountException("비어있는 항목이 있습니다. 작성해주세요.", 0);
+		}
+		
+		if (aTypeC.getSelectedIndex() == 1) {
+			Account addAccount = new Account(aNumTF.getText(), memberNameTF.getText(),
+					Integer.parseInt(passTF.getText()),
+					(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0);
+			aDao.add(addAccount);
+			setDialog("입출금 계좌를 성공적으로 개설했습니다.", 1);
+		} else if (aTypeC.getSelectedIndex() == 2) {
+			MinusAccount addMAccount = new MinusAccount(aNumTF.getText(), memberNameTF.getText(),
+					Integer.parseInt(passTF.getText()),
+					(!restMoneyTF.getText().trim().equals("")) ? Long.parseLong(restMoneyTF.getText()) : 0,
+					(!outputMoneyTF.getText().trim().equals("")) ? Long.parseLong(outputMoneyTF.getText()) : -1);
+			aDao.add(addMAccount);
+			setDialog("마이너스 계좌를 성공적으로 개설했습니다.", 1);
 		} else {
-			try {
-				throw new AccountException("비어있는 항목이 있습니다.", -400);
-			} catch (AccountException e1) {
-				e1.printStackTrace();
-				contentTA.setText("");
-				JOptionPane.showMessageDialog(null, "비어있는 항목이 있습니다.", "알림", JOptionPane.ERROR_MESSAGE);
-			}
+			setDialog("계좌 종류를 선택 후, 계좌를 생성해주세요.", 0);
+			contentTA.setText("");
 		}
 	}
 
 	/**
-	 * 전체 계좌 조회 메서드 
-	 * 계좌 정보가 담겨있는 aManager의 size를 측정해 0일 경우, 예외처리를 진행합니다.
+	 * 전체 계좌 조회 
+	 * 메서드 계좌 정보가 담겨있는 aManager의 size를 측정해 0일 경우, 예외처리를 진행합니다.
 	 * 
 	 * @throws IOException
 	 * @throws HeadlessException
@@ -337,11 +352,10 @@ public class MainFrame extends Frame {
 			}
 		} else {
 			try {
-				throw new AccountException("현재 등록된 계좌가 없습니다.", -100);
+				throw new AccountException("등록된 계좌가 없습니다.", 0);
 			} catch (AccountException e1) {
 				e1.printStackTrace();
 				contentTA.setText("");
-				JOptionPane.showMessageDialog(null, "현재 등록된 계좌가 없습니다.", "알림", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -373,7 +387,7 @@ public class MainFrame extends Frame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					readAccount();
-				} catch (IOException e1) {
+				} catch (IOException | AccountException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -384,7 +398,7 @@ public class MainFrame extends Frame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					removeAccount();
-				} catch (IOException e1) {
+				} catch (IOException | AccountException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -395,7 +409,7 @@ public class MainFrame extends Frame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					searchAccount();
-				} catch (IOException e1) {
+				} catch (IOException | AccountException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -406,9 +420,7 @@ public class MainFrame extends Frame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					addAccount();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (AccountException e1) {
+				} catch (IOException | AccountException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -419,9 +431,7 @@ public class MainFrame extends Frame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					listAll();
-				} catch (HeadlessException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
+				} catch (IOException | HeadlessException e1) {
 					e1.printStackTrace();
 				}
 			}
