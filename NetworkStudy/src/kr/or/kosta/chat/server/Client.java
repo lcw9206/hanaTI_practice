@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import kr.or.kosta.chat.common.Protocol;
@@ -97,8 +98,11 @@ public class Client extends Thread {
 			if(message != null) chatServer.sendAllMessage(message);
 			break;
 		case Protocol.DISCONNECT:
-			Client a = chatServer.getClients().get(nickName);
-			chatServer.removeClient(a);
+			running = false;
+			chatServer.removeClient(chatServer.getClients().get(nickName));
+			sendMessage(Protocol.DISCONNECT + Protocol.DELEMETER + nickName);
+			break;
+			// 메세지를 어떻게 알려줄까?
 			
 		default:
 			break;

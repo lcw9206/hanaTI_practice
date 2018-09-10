@@ -34,6 +34,7 @@ public class ChatServer {
 
 		running = true;
 		clients = new Hashtable<String, Client>();
+
 		System.out.println("BTS[" + PORT + "] ChatServer Start....");
 
 		while (running) {
@@ -64,34 +65,12 @@ public class ChatServer {
 	}
 
 	public void removeClient(Client client) {
-		try {
-			Enumeration<Client> e = clients.elements();
-			System.out.println("삭제 전");
-			for (int i = 0; i < clients.size(); i++) {
-				if(e.hasMoreElements()) {
-					System.out.println(e.nextElement());
-				}
-			}
-			client.getSocket().close();
-			System.out.println("close");
-			clients.remove(client.getSocket());
-			
-			System.out.println("삭제 후");
-			for (int i = 0; i < clients.size(); i++) {
-				if(e.hasMoreElements()) {
-					System.out.println(e.nextElement());
-				}
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		clients.remove(client);
 	}
 
 	public void sendAllMessage(String message) {
 		Enumeration<Client> e = clients.elements();
-		while(e.hasMoreElements()) {
+		while (e.hasMoreElements()) {
 			Client client = e.nextElement();
 			client.sendMessage(message);
 		}
