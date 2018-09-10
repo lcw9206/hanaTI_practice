@@ -93,7 +93,13 @@ public class Client extends Thread {
 				sendMessage(Protocol.CONNECT_RESULT + Protocol.DELEMETER + nickName + Protocol.DELEMETER +  "SUCCESS");
 			}
 			break;
-
+		case Protocol.MULTI_CHAT:
+			if(message != null) chatServer.sendAllMessage(message);
+			break;
+		case Protocol.DISCONNECT:
+			Client a = chatServer.getClients().get(nickName);
+			chatServer.removeClient(a);
+			
 		default:
 			break;
 		}

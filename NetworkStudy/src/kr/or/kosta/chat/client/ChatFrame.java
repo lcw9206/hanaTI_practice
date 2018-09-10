@@ -136,8 +136,7 @@ public class ChatFrame extends Frame {
 			return;
 		}
 		inputTF.setText("");
-		System.out.println(message);
-		
+		chatClient.sendMessage(Protocol.MULTI_CHAT + Protocol.DELEMETER + nickName + Protocol.DELEMETER + message);
 	}
 	
 	public void appendMessage(String message) {
@@ -147,6 +146,7 @@ public class ChatFrame extends Frame {
 	
 	public void finish() {
 		setVisible(false);
+		chatClient.sendMessage(Protocol.DISCONNECT + Protocol.DELEMETER + nickName);
 		dispose();
 		System.exit(0);
 	}
@@ -196,9 +196,7 @@ public class ChatFrame extends Frame {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.SELECTED) {
 					String name = userList.getSelectedItem();
-					
 				}
-				
 			}
 		});
 		

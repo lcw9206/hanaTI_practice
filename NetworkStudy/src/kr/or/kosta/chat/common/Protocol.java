@@ -1,4 +1,4 @@
-package kr.or.kosta.chat.common;kr
+package kr.or.kosta.chat.common;
 
 public interface Protocol {
 

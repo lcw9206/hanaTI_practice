@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 
 import kr.or.kosta.chat.common.Protocol;
+import kr.or.kosta.chat.server.ChatServer;
+import kr.or.kosta.chat.server.Client;
 
 /**
  * 서버와의 통신 대행자
@@ -23,7 +26,7 @@ public class ChatClient {
 	private PrintWriter out;
 	
 	private boolean running;
-	
+	private ChatServer chatServer;
 	private ChatFrame chatFrame;
 	
 	public ChatClient(ChatFrame chatFrame) {
@@ -86,18 +89,20 @@ public class ChatClient {
 		String[] tokens = message.split(Protocol.DELEMETER);
 		int protocol = Integer.parseInt(tokens[0]);
 		String nickName = tokens[1];
-
+		System.out.println("process : " + message);
 		switch (protocol) {
 		case Protocol.CONNECT_RESULT:
 			String result = tokens[2];
 			if(result.equalsIgnoreCase("SUCCESS")) {
 				chatFrame.appendMessage("###"+nickName+"님이 연결하였습니다. ###");
 				chatFrame.connectEnable(false);
-			}else {
+			} else {
 				JOptionPane.showMessageDialog(null, "이미 사용중인 대화명입니다.\n다른 대화명을 사용하세요.", "경고", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
-
+		case Protocol.MULTI_CHAT:
+			chatFrame.appendMessage("[" + nickName + "] : " + tokens[2]);
+			break;
 		default:
 			break;
 		}
