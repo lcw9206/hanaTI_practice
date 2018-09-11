@@ -4,21 +4,24 @@ import kr.or.kosta.boundary.ChatServer;
 
 public class Room {
 
-	private String roomTitle;
-	private int roomNumber = 0;
+	private String roomTitle, nickName;
+	private int roomNumber;
 	private int maxPeople;
-	private int joinPeople;
 	
 	ChatServer chatServer;
 	
 	// Default 생성자
-	public Room(String roomTitle, int maxPeople) {
+	public Room(String nickName, String roomTitle, int maxPeople) {
+		this.nickName = nickName;
 		this.roomTitle = roomTitle;
 		this.maxPeople = maxPeople;
 		roomNumber++;
-		// 생성 = 접속이므로 1
-		joinPeople = 1;
 	}
+	
+//	public int getClientsCount(String roomTitle) {
+//		return joinList.get(roomTitle).length();
+//	}
+	
 	
 	public int getRoomNumber() {
 		return roomNumber;

@@ -14,42 +14,67 @@ import kr.or.kosta.entity.Room;
 public class ChatServer {
 	public static final int PORT = 7777;
 	private boolean running;
-	private String nickName;
-	private Socket socket;
 	private ServerSocket serverSocket;
-	// 총 인원
-	private Hashtable<String, Client> clients;
-	// 방에 들어가 있는 인원
+	// 밖에 있는 인원 (닉네임, 객체)
+	private Hashtable<String, Client> outClients;
+	// 방에 들어가 있는 인원을 저장하는 객체 (방 제목, 객체) 
 	private Hashtable<String, Client> joinClients;
-	// 방의 수
+	// 방을 저장하는 객체 (방 제목, 객체)
 	private Hashtable<String, Room> rooms;
-	private PrintWriter out;
-	private BufferedReader in;
 
+	Room room;
+	
 	// getter 메서드
 	public boolean isRunning() {
 		return running;
 	}
 
-	public Hashtable<String, Client> getClients() {
-		return clients;
+	public Hashtable<String, Client> getOutClients() {
+		return outClients;
 	}
 
 	public Hashtable<String, Room> getRooms() {
 		return rooms;
 	}
 
-	public Hashtable<String, Client> getJoinCleints() {
+	public Hashtable<String, Client> getJoinClients() {
 		return joinClients;
 	}
-	
-	public int getClientCount() {
-		return clients.size();
+
+	public int getOutCount() {
+		return outClients.size();
 	}
 
+	public int getJoinCount() {
+		return joinClients.size();
+	}
+	
 	public int getRoomClients() {
+		Enumeration<Room> e = getRooms().elements();
 		return 0;
 	}
+
+	public String outClientsString() {
+		String result = "";
+		Enumeration<String> e = outClients.keys();
+
+		while (e.hasMoreElements()) {
+			result += (e.nextElement() + "\t");
+		}
+		return result;
+	}
+	
+//	public String joinClientsString(String roomTitle) {
+//		String result = "";
+//		// 여기 기
+//		Enumeration<String> e = outClients.keys();
+//		Enumeration<String> e = joinClients.keys();
+//
+//		while (e.hasMoreElements()) {
+//			result += (e.nextElement() + "\t");
+//		}
+//		return result;
+//	}	
 
 	public void startUp() throws IOException {
 		try {
@@ -59,7 +84,7 @@ public class ChatServer {
 		}
 
 		running = true;
-		clients = new Hashtable<String, Client>();
+		outClients = new Hashtable<String, Client>();
 		rooms = new Hashtable<String, Room>();
 		joinClients = new Hashtable<String, Client>();
 
@@ -68,9 +93,8 @@ public class ChatServer {
 		while (running) {
 			try {
 				Socket socket = serverSocket.accept();
-				System.out.println("connect from [" + socket.getInetAddress()+"]");
+				System.out.println("connect from [" + socket.getInetAddress() + "]");
 				Client client = new Client(socket, this);
-				System.out.println("소켓 생성");
 				client.start();
 
 			} catch (IOException e) {
@@ -83,31 +107,33 @@ public class ChatServer {
 
 	}
 
-	public void addRoom(String roomTitle, int maxPeople) {
-		Room room = new Room(roomTitle, maxPeople);
-		rooms.put(roomTitle, room);
+	// 방장 추가
+	public void addRoom(String nickName, String roomTitle, int maxPeople) {
+			Room room = new Room(nickName, roomTitle, maxPeople);
+			rooms.put(roomTitle, room);
+			joinRoom(roomTitle, getOutClients().get(nickName));
 	}
 
 	public void addClient(Client client) {
-		clients.put(client.getNickName(), client);
+		outClients.put(client.getNickName(), client);
 	}
 
 	public void removeClient(Client client) {
-		clients.remove(client.getNickName(), client);
+		if (outClients.contains(client)) {
+			outClients.remove(client.getNickName(), client);
+		} else {
+			joinClients.remove(client.getNickName(), client);
+		}
 	}
-	
+
 	/**
-	 * joinRoom
+	 * 
 	 * @param roomTitle
 	 * @param client
 	 */
-	public void joinRoom(String roomTitle, int maxPeople, Client client) {
-		if (!rooms.containsKey(roomTitle)) {
-			System.out.println("방을 생성합니다!");
-			addRoom(roomTitle, maxPeople);
-		}
-		System.out.println("join Room!");
+	public void joinRoom(String roomTitle, Client client) {
 		joinClients.put(roomTitle, client);
+		outClients.remove(client.getNickName(), client);
 	}
 
 	public void removeRoom(Room room) {
@@ -115,15 +141,16 @@ public class ChatServer {
 	}
 
 	public void exitRoom(Client client, String roomTitle) {
+		// 조인, 아웃일 경우
 		joinClients.remove(roomTitle, client);
-		// 다시 생각해보기
-		if(joinClients.get(roomTitle) == null) {
+		// 키(사람)가 없을 경우 방 삭제
+		if (joinClients.get(roomTitle) == null) {
 			rooms.remove(roomTitle);
 		}
 	}
 
 	public void sendAllMessage(String message) {
-		Enumeration<Client> e = joinClients.elements();
+		Enumeration<Client> e = outClients.elements();
 		while (e.hasMoreElements()) {
 			Client client = e.nextElement();
 			client.sendMessage(message);
@@ -136,12 +163,13 @@ public class ChatServer {
 	 * @param message
 	 */
 	public void sendPrivateMessage(String message, String nickName) {
-		Client cl = clients.get(nickName);
+		Client cl = joinClients.get(nickName);
 		cl.sendMessage(message);
 	}
 
 	public boolean isExistNickName(String nickName) {
-		return clients.containsKey(nickName);
+
+		return outClients.containsKey(nickName) || joinClients.contains(nickName);
 	}
 
 }

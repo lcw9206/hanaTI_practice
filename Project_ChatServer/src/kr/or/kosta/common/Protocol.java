@@ -24,4 +24,6 @@ public interface Protocol {
 	public static final int EXIT_ROOM = 4001;
 	public static final int DISCONNECT = 4002;
 	
+	public static final int ADD_ROOM = 5000;
+
 }
