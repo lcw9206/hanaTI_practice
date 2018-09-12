@@ -11,7 +11,8 @@ public interface Protocol {
 
 	// 접속관련 프로토콜
 	public static final int CONNECT_SERVER = 1001;
-	public static final int JOIN_ROOM = 1002;
+	public static final int ADD_ROOM = 1002;
+	public static final int JOIN_ROOM = 1003;
 
 	// 채팅관련 프로토콜
 	public static final int MULTI = 2001;
@@ -23,7 +24,11 @@ public interface Protocol {
 	// 퇴장관련 프로토콜
 	public static final int EXIT_ROOM = 4001;
 	public static final int DISCONNECT = 4002;
+
 	
-	public static final int ADD_ROOM = 5000;
+	public static final int ROOM_INFO = 5001;
+	
+	public static final String RESPONSE_SUCCESS = "SUCCESS";
+	public static final String RESPONSE_FAIL = "FAIL";
 
 }
