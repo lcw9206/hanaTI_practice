@@ -38,12 +38,17 @@ public class Room {
 	public String getRoomTitle() {
 		return roomTitle;
 	}
+	
 	public int getMaxPeople() {
 		return maxPeople;
 	}
+	
+	public String getNickName() {
+		return nickName;
+	}
 
 	public boolean isEnterable( ) {
-		return maxPeople >= getClientsCount(); 
+		return maxPeople > getClientsCount(); 
 	}
 
 	public void addClientsList(Client client) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -34,36 +35,42 @@ public class ChatServer {
 		return rooms;
 	}
 
-	public String getRoomsList() {
-		String roomsList = "";
-		Room room = null;
-		List list = new ArrayList();
-		list.addAll(rooms.values());
-		for (int i = 0; i < list.size(); i++) {
-			room = (Room) list.get(i);
-			if (room != null && room.getRoomTitle() != null) {
-				roomsList += (room.getRoomTitle() + "\t");
-			}
+	public List<Client> getClientFromRoom(String roomTitle) {
+
+		List<Client> clientList = new ArrayList<Client>();
+		Room room = rooms.get(roomTitle);
+
+		if (room != null) {
+			clientList.addAll(room.getClientsList());
 		}
+
+		return clientList;
+	}
+
+	public String getRoomsTitleList() {
+		String roomsTitleList = "";
+//		Room room = null;
+//		List list = new ArrayList();
+//		list.addAll(rooms.values());
+//		for (int i = 0; i < list.size(); i++) {
+//			room = (Room) list.get(i);
+//			if (room != null && room.getRoomTitle() != null) {
+//				roomsTitleList += (room.getRoomTitle() + "\t");
+//			}
+//		}
+		List<String> roomTitles = Collections.list(rooms.keys());
+		for (String title : roomTitles) {
+			roomsTitleList += title;
+		}
+		return roomsTitleList;
+	}
+
+	public List getRoomsList() {
+		List roomsList = new ArrayList();
+		roomsList.addAll(rooms.values());
 		return roomsList;
 	}
-
-	public String getRoomsNumberList() {
-		String roomsNumberList = "";
-		Room room = null;
-		List list = new ArrayList();
-		list.addAll(rooms.values());
-		for (int i = 0; i < list.size(); i++) {
-			room = (Room) list.get(i);
-			roomsNumberList += (room.getRoomNumber() + "\t");
-		}
-		return roomsNumberList;
-	}
-
-	public int getOutClientsCount() {
-		return outClients.size();
-	}
-
+	
 	public List getOutClientsList() {
 		List list = new ArrayList();
 		Enumeration<Client> e = outClients.elements();
@@ -73,14 +80,16 @@ public class ChatServer {
 		return list;
 	}
 
-	public int getJoinClientsCount(String roomTitle) {
-		return rooms.get(roomTitle).getClientsCount();
+	public int getClientCountFromRoom(String roomTitle) {
+		return getClientFromRoom(roomTitle).size();
 	}
 
 	public List getJoinClientsList(String roomTitle) {
-		List list = new ArrayList();
-		list.addAll(rooms.get(roomTitle).getClientsList());
-		return list;
+//		List list = new ArrayList();
+//		if(hasRoom(roomTitle)) {
+//			list.addAll(rooms.get(roomTitle).getClientsList());
+//		}
+		return getClientFromRoom(roomTitle);
 	}
 
 	public HashMap getAllClientsList() {
@@ -106,6 +115,15 @@ public class ChatServer {
 		return clientsList;
 	}
 
+	public int getOutClientsCount() {
+		return outClients.size();
+	}
+
+	public int getJoinClientsCount(String roomTitle) {
+//		return rooms.get(roomTitle).getClientsCount();
+		return getClientCountFromRoom(roomTitle);
+	}
+
 	public String outClientsString() {
 		String result = "";
 		Enumeration<String> e = outClients.keys();
@@ -118,13 +136,25 @@ public class ChatServer {
 
 	public String joinClientsString(String roomTitle) {
 		String result = "";
-		List list = null;
+		List list = getClientFromRoom(roomTitle);
 		Client client;
-		Room room = rooms.get(roomTitle);
-		list = room.getClientsList();
-		for (int i = 0; i < list.size(); i++) {
-			client = (Client) list.get(i);
-			result += (client.getNickName() + "\t");
+//		if (hasRoom(roomTitle)) {
+//			list = rooms.get(roomTitle).getClientsList();
+			for (int i = 0; i < list.size(); i++) {
+				client = (Client) list.get(i);
+				result += (client.getNickName() + "\t");
+			}
+//		}
+		return result;
+	}
+
+	public String getRoomsListString() {
+		String result = "";
+		Enumeration<String> e = getRooms().keys();
+		while (e.hasMoreElements()) {
+			String key = (String) e.nextElement();
+			System.out.println("elements : " + key);
+			result += (key + "\t");
 		}
 		return result;
 	}
@@ -150,7 +180,8 @@ public class ChatServer {
 				client.start();
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				break;
+//				e.printStackTrace();
 			}
 		}
 	}
@@ -163,6 +194,8 @@ public class ChatServer {
 	public void addRoom(String nickName, String roomTitle, int maxPeople, Client client) {
 		Room room = new Room(nickName, roomTitle, maxPeople);
 		rooms.put(roomTitle, room);
+		joinRoom(roomTitle, client);
+
 	}
 
 	public void addClient(Client client) {
@@ -170,13 +203,17 @@ public class ChatServer {
 	}
 
 	public void removeClient(Client client, String roomTitle) {
-		if (outClients.contains(client)) {
-			outClients.remove(client.getNickName(), client);
-		} else {
-			rooms.get(roomTitle).getClientsList().remove(client);
-		}
+			Room room = rooms.get(roomTitle);			
+			if (room != null) {
+				room.removeClientsList(client);
+			}
 	}
 
+	public void removeClient(Client client) {
+			outClients.remove(client.getNickName(), client);
+	}
+
+	
 	/**
 	 * 
 	 * @param roomTitle
@@ -184,25 +221,36 @@ public class ChatServer {
 	 */
 	public void joinRoom(String roomTitle, Client client) {
 		rooms.get(roomTitle).addClientsList(client);
-		System.out.println("들어온 방 : " + rooms.get(roomTitle).getRoomTitle() + " 인원 size : " + rooms.get(roomTitle).getClientsList().size());
 		outClients.remove(client.getNickName(), client);
-		System.out.println("대기실 인원 : " + outClients.size());
+		System.out.println("들어온 방 : " + rooms.get(roomTitle).getRoomTitle() + " 인원 size : "
+				+ rooms.get(roomTitle).getClientsList().size() + " 대기실 인원 : " + outClients.size());
 	}
 
 	public void removeRoom(Room room) {
 		rooms.remove(room.getRoomTitle(), room);
+
 	}
 
 	public void exitRoom(Client client, String roomTitle) {
 //		조인, 아웃일 경우
-//		List list = new ArrayList();
-//		list.addAll(rooms.get(roomTitle).addClientsList(client));
-		//		Client client1 = null;
-//		getJoinClientsList(roomTitle).
-//		 키(사람)가 없을 경우 방 삭제
-//		if (joinClients.get(roomTitle)) {
-//			rooms.remove(roomTitle);
-//		}
+//		rooms.get(roomTitle).removeClientsList(client);
+//		getClientFromRoom(roomTitle).remove(client);
+		Room room = rooms.get(roomTitle);
+		if (room != null) {
+			room.removeClientsList(client);
+		}
+		for (int i = 0; i < getClientFromRoom(roomTitle).size(); i++) {
+			System.out.println("사람들 : " + getClientFromRoom(roomTitle).get(i).getNickName());
+		}
+		System.out.println("=========================");
+		outClients.put(client.getNickName(), client);
+		
+//		if (rooms.get(roomTitle).getClientsCount() == 0)
+		System.out.println("사이즈 : " + getClientCountFromRoom(roomTitle));
+		if (getClientCountFromRoom(roomTitle) == 0) {
+			System.out.println("방 삭제!");
+			rooms.remove(roomTitle);
+		}
 	}
 
 	public void sendAllMessage(String message) {
@@ -215,16 +263,11 @@ public class ChatServer {
 		}
 	}
 
-	/**
-	 * 귓속말 수행 메서드
-	 * 
-	 * @param message
-	 */
 	public void sendPrivateMessage(String message, String nickName) {
 		Client client = (Client) getAllClientsList().get(nickName);
 		client.sendMessage(message);
 	}
-	
+
 	public void sendOutMessage(String message) {
 		Enumeration<Client> e = outClients.elements();
 		Client client = null;
@@ -233,9 +276,9 @@ public class ChatServer {
 			client.sendMessage(message);
 		}
 	}
-	
+
 	public void sendJoinMessage(String message, String roomTitle) {
-		Client client;
+		Client client = null;
 		List<Client> list = new ArrayList();
 		list.addAll(getJoinClientsList(roomTitle));
 		for (int i = 0; i < list.size(); i++) {
