@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import kr.or.kosta.bin.Client;
+import kr.or.kosta.common.Protocol;
 import kr.or.kosta.entity.Room;
 
 public class ChatServer {
@@ -23,9 +24,6 @@ public class ChatServer {
 	private Hashtable<String, Room> rooms;
 
 	// getter 메서드
-	public boolean isRunning() {
-		return running;
-	}
 
 	public Hashtable<String, Client> getOutClients() {
 		return outClients;
@@ -35,29 +33,8 @@ public class ChatServer {
 		return rooms;
 	}
 
-	public List<Client> getClientFromRoom(String roomTitle) {
-
-		List<Client> clientList = new ArrayList<Client>();
-		Room room = rooms.get(roomTitle);
-
-		if (room != null) {
-			clientList.addAll(room.getClientsList());
-		}
-
-		return clientList;
-	}
-
 	public String getRoomsTitleList() {
 		String roomsTitleList = "";
-//		Room room = null;
-//		List list = new ArrayList();
-//		list.addAll(rooms.values());
-//		for (int i = 0; i < list.size(); i++) {
-//			room = (Room) list.get(i);
-//			if (room != null && room.getRoomTitle() != null) {
-//				roomsTitleList += (room.getRoomTitle() + "\t");
-//			}
-//		}
 		List<String> roomTitles = Collections.list(rooms.keys());
 		for (String title : roomTitles) {
 			roomsTitleList += title;
@@ -66,36 +43,36 @@ public class ChatServer {
 	}
 
 	public List getRoomsList() {
-		List roomsList = new ArrayList();
+		List<Room> roomsList = new ArrayList<Room>();
 		roomsList.addAll(rooms.values());
 		return roomsList;
 	}
 	
-	public List getOutClientsList() {
-		List list = new ArrayList();
+	public List<Client> getRoomClientsList(String roomTitle) {
+
+		List<Client> clientList = new ArrayList<Client>();
+		Room room = rooms.get(roomTitle);
+		
+		if (room != null) {
+			clientList.addAll(room.getClientsList());
+		}
+
+		return clientList;
+	}
+	
+	public List<Client> getOutClientsList() {
+		List<Client> list = new ArrayList<Client>();
 		Enumeration<Client> e = outClients.elements();
 		while (e.hasMoreElements()) {
 			list.add(e.nextElement());
 		}
 		return list;
 	}
-
-	public int getClientCountFromRoom(String roomTitle) {
-		return getClientFromRoom(roomTitle).size();
-	}
-
-	public List getJoinClientsList(String roomTitle) {
-//		List list = new ArrayList();
-//		if(hasRoom(roomTitle)) {
-//			list.addAll(rooms.get(roomTitle).getClientsList());
-//		}
-		return getClientFromRoom(roomTitle);
-	}
-
-	public HashMap getAllClientsList() {
+	
+	public HashMap<String, Client> getAllClientsList() {
 		HashMap<String, Client> clientsList = new HashMap<>();
-		List list = new ArrayList();
-		List list2 = new ArrayList();
+		List<Room> list = new ArrayList<Room>();
+		List<Client> list2 = new ArrayList<Client>();
 		Room room = null;
 		if (!rooms.values().isEmpty()) {
 			list.addAll(rooms.values());
@@ -115,48 +92,48 @@ public class ChatServer {
 		return clientsList;
 	}
 
+	public int getRoomClientCount(String roomTitle) {
+		return getRoomClientsList(roomTitle).size();
+	}
+	
 	public int getOutClientsCount() {
 		return outClients.size();
 	}
 
-	public int getJoinClientsCount(String roomTitle) {
-//		return rooms.get(roomTitle).getClientsCount();
-		return getClientCountFromRoom(roomTitle);
+	public String getRoomsListString() {
+		String result = "";
+		String key = "";
+		Enumeration<String> e = rooms.keys();
+		while (e.hasMoreElements()) {
+			key = (String) e.nextElement();
+			result += (key + Protocol.DELEMETER_SUB);
+		}
+		return result;
 	}
-
+	
 	public String outClientsString() {
 		String result = "";
 		Enumeration<String> e = outClients.keys();
 
 		while (e.hasMoreElements()) {
-			result += (e.nextElement() + "\t");
+			result += (e.nextElement() + Protocol.DELEMETER_SUB);
 		}
 		return result;
 	}
 
 	public String joinClientsString(String roomTitle) {
 		String result = "";
-		List list = getClientFromRoom(roomTitle);
-		Client client;
-//		if (hasRoom(roomTitle)) {
-//			list = rooms.get(roomTitle).getClientsList();
-			for (int i = 0; i < list.size(); i++) {
-				client = (Client) list.get(i);
-				result += (client.getNickName() + "\t");
-			}
-//		}
-		return result;
-	}
-
-	public String getRoomsListString() {
-		String result = "";
-		Enumeration<String> e = getRooms().keys();
-		while (e.hasMoreElements()) {
-			String key = (String) e.nextElement();
-			System.out.println("elements : " + key);
-			result += (key + "\t");
+		Room room = null;
+		room = rooms.get(roomTitle);
+		List<Client> list = room.getClientsList(); 
+		for (Client client : list) {
+			result += (client.getNickName() + Protocol.DELEMETER_SUB);
 		}
 		return result;
+	}
+	
+	public boolean isRunning() {
+		return running;
 	}
 
 	public void startUp() throws IOException {
@@ -181,39 +158,38 @@ public class ChatServer {
 
 			} catch (IOException e) {
 				break;
-//				e.printStackTrace();
 			}
 		}
 	}
 
-	public void shutDown() {
-
-	}
-
-	// 방장 추가
+	// 방 추가
 	public void addRoom(String nickName, String roomTitle, int maxPeople, Client client) {
 		Room room = new Room(nickName, roomTitle, maxPeople);
+		room.addClientsList(client);
 		rooms.put(roomTitle, room);
-		joinRoom(roomTitle, client);
-
+		outClients.remove(client.getNickName());
 	}
 
-	public void addClient(Client client) {
+	public void addOutClient(Client client) {
 		outClients.put(client.getNickName(), client);
 	}
-
-	public void removeClient(Client client, String roomTitle) {
-			Room room = rooms.get(roomTitle);			
-			if (room != null) {
-				room.removeClientsList(client);
-			}
+	
+	// 오버로딩 방에 있는 애들 삭제
+	public boolean removeClient(Client client, String roomTitle) {
+		Room room = rooms.get(roomTitle);			
+		room.removeClientsList(client);
+		
+		if (room.getClientsCount() == 0) {
+			rooms.remove(roomTitle);
+			return false;
+		}
+		return true;
 	}
 
 	public void removeClient(Client client) {
-			outClients.remove(client.getNickName(), client);
+		outClients.remove(client.getNickName(), client);
 	}
 
-	
 	/**
 	 * 
 	 * @param roomTitle
@@ -221,34 +197,28 @@ public class ChatServer {
 	 */
 	public void joinRoom(String roomTitle, Client client) {
 		rooms.get(roomTitle).addClientsList(client);
-		outClients.remove(client.getNickName(), client);
-		System.out.println("들어온 방 : " + rooms.get(roomTitle).getRoomTitle() + " 인원 size : "
-				+ rooms.get(roomTitle).getClientsList().size() + " 대기실 인원 : " + outClients.size());
+		outClients.remove(client.getNickName());
+		
+		System.out.println("들어온 방 : " + rooms.get(roomTitle).getRoomTitle() + 
+				" 방 인원 : " + rooms.get(roomTitle).getClientsList().size() + 
+				" 벡터 사이즈 : " + rooms.get(roomTitle).getClientsCount() +
+				" 입장한 사람들 : " + joinClientsString(roomTitle)+ "\n");
 	}
 
 	public void removeRoom(Room room) {
 		rooms.remove(room.getRoomTitle(), room);
-
 	}
 
 	public void exitRoom(Client client, String roomTitle) {
 //		조인, 아웃일 경우
-//		rooms.get(roomTitle).removeClientsList(client);
-//		getClientFromRoom(roomTitle).remove(client);
 		Room room = rooms.get(roomTitle);
+		outClients.put(client.getNickName(), client);
 		if (room != null) {
 			room.removeClientsList(client);
 		}
-		for (int i = 0; i < getClientFromRoom(roomTitle).size(); i++) {
-			System.out.println("사람들 : " + getClientFromRoom(roomTitle).get(i).getNickName());
-		}
-		System.out.println("=========================");
-		outClients.put(client.getNickName(), client);
-		
-//		if (rooms.get(roomTitle).getClientsCount() == 0)
-		System.out.println("사이즈 : " + getClientCountFromRoom(roomTitle));
-		if (getClientCountFromRoom(roomTitle) == 0) {
-			System.out.println("방 삭제!");
+
+		System.out.println("방안의 인원 : " + getRoomClientCount(roomTitle) + " 밖의 인원 : " + getOutClientsCount() + "\n");
+		if (getRoomClientCount(roomTitle) == 0) {
 			rooms.remove(roomTitle);
 		}
 	}
@@ -279,8 +249,9 @@ public class ChatServer {
 
 	public void sendJoinMessage(String message, String roomTitle) {
 		Client client = null;
-		List<Client> list = new ArrayList();
-		list.addAll(getJoinClientsList(roomTitle));
+		List<Client> list = new ArrayList<Client>();
+		
+		list.addAll(getRoomClientsList(roomTitle));
 		for (int i = 0; i < list.size(); i++) {
 			client = (Client) list.get(i);
 			client.sendMessage(message);
@@ -288,7 +259,6 @@ public class ChatServer {
 	}
 
 	public boolean isExistNickName(String nickName) {
-
 		return getAllClientsList().containsKey(nickName);
 	}
 

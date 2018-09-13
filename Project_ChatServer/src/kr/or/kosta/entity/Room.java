@@ -1,7 +1,12 @@
 package kr.or.kosta.entity;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import kr.or.kosta.bin.Client;
 import kr.or.kosta.boundary.ChatServer;
@@ -11,8 +16,7 @@ public class Room {
 	private String roomTitle, nickName;
 	private int roomNumber;
 	private int maxPeople;
-	// 리스트에 담아서 
-	Vector<Client> clientsList = new Vector<Client>();
+	private Hashtable<String, Client> clientsList = new Hashtable<String, Client>();
 	ChatServer chatServer;
 	
 	// Default 생성자
@@ -27,10 +31,13 @@ public class Room {
 		return clientsList.size();
 	}
 	
-	public List getClientsList() {
-		return (List)clientsList;
+	public List<Client> getClientsList() {
+//		List<Client> list = new ArrayList();
+//		list.addAll(clientsList.values()); 
+//		return list;
+		return Collections.list(Collections.enumeration(clientsList.values()));
 	}
-
+	
 	public int getRoomNumber() {
 		return roomNumber;
 	}
@@ -52,11 +59,27 @@ public class Room {
 	}
 
 	public void addClientsList(Client client) {
-		clientsList.add(client);
+		System.out.println("추가될 사람 : " + client.getNickName());
+		List<Client> clList = this.getClientsList();
+		Client cl;
+		System.out.println("-------------- 추가 전 들어있는 사람 ---------------");
+		for (int i = 0; i < clList.size(); i++) {
+			cl = (Client)clList.get(i);
+			System.out.print(cl.getNickName());
+		}
+		System.out.println("\n-------------------------");
+		clientsList.put(client.getNickName(), client);
+		List<Client> clList1 = getClientsList();
+		System.out.println("-------------- 추가후 들어있는 사람 ---------------");
+		for (int i = 0; i < clList1.size(); i++) {
+			cl = (Client)clList1.get(i);
+			System.out.print(cl.getNickName());
+		}
+		System.out.println("\n-------------------------");
 	}
 	
 	public void removeClientsList(Client client) {
-		clientsList.remove(client);
+		clientsList.remove(client.getNickName());
 	}
 
 }

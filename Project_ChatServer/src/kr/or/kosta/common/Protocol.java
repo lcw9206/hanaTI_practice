@@ -7,7 +7,8 @@ package kr.or.kosta.common;
  */
 public interface Protocol {
 
-	public static final String DELEMETER = ",";
+	public static final String DELEMETER = "!#%";
+	public static final String DELEMETER_SUB = "!@&";
 
 	// 접속관련 프로토콜
 	public static final int CONNECT_SERVER = 1001;
@@ -17,6 +18,7 @@ public interface Protocol {
 	public static final int JOIN_ROOM = 1005;
 	public static final int JOIN_ROOM_WAITING = 1006;
 	public static final int JOIN_ROOM_PARTICIPANT = 1007;
+	public static final int JOIN_ROOM_PARTICIPANT_EXCEPT = 1008;
 	
 
 	// 채팅관련 프로토콜
@@ -27,7 +29,8 @@ public interface Protocol {
 	public static final int INVITE = 3001;
 	public static final int INVITE_ACCEPT = 3002;
 	public static final int INVITE_PATICIPANT = 3003;
-
+	public static final int INVITE_WAITING = 3004;
+	
 	// 퇴장관련 프로토콜
 	public static final int EXIT_ROOM = 4000;
 	public static final int EXIT_ROOM_WAITING = 4001;
@@ -38,7 +41,14 @@ public interface Protocol {
 	public static final int PARTICIPANT_INFO = 5002;
 	public static final int WAITING_INFO = 5003;
 	
+	public static final int CHANGE_NICKNAME = 6000;
+	public static final int CHANGE_NICKNAME_PARTICIPANT = 6001;
+	
 	public static final String RESPONSE_SUCCESS = "SUCCESS";
 	public static final String RESPONSE_FAIL = "FAIL";
+	
+	public static final String FLAG_TRUE = "TRUE";
+	public static final String FLAG_FALSE = "FALSE";
+	
 
 }
