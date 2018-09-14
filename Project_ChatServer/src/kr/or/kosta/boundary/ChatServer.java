@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -14,25 +13,48 @@ import kr.or.kosta.bin.Client;
 import kr.or.kosta.common.Protocol;
 import kr.or.kosta.entity.Room;
 
+/**
+ * 방과 인원을 관리하는 클래스 
+ * 인원을 방에서 관리해야 했습니다.
+ * 
+ * @author 이철우
+ *
+ */
 public class ChatServer {
+	/** 포트번호 */
 	public static final int PORT = 7777;
+	/** 스레드 동작 여부를 위한 변수 */
 	private boolean running;
+
 	private ServerSocket serverSocket;
-	// 밖에 있는 인원 (닉네임, 객체)
+	/** 대기방 인원 <닉네임, 객체> */
 	private Hashtable<String, Client> outClients;
-	// 방을 저장하는 객체 (방 제목, 객체)
+	/** 방 목록 <방 제목, 객체> */
 	private Hashtable<String, Room> rooms;
 
-	// getter 메서드
-
+	/**
+	 * 대기 인원들을 반환하는 Getter 메서드
+	 * 
+	 * @return Hashtable<String, Client>
+	 */
 	public Hashtable<String, Client> getOutClients() {
 		return outClients;
 	}
 
+	/**
+	 * 생성된 방들을 반환하는 Getter 메서드
+	 * 
+	 * @return Hashtable<String, Room>
+	 */
 	public Hashtable<String, Room> getRooms() {
 		return rooms;
 	}
 
+	/**
+	 * 개설된 방들의 제목을 String 타입에 저장해 반환하는 Getter 메서드
+	 * 
+	 * @return String
+	 */
 	public String getRoomsTitleList() {
 		String roomsTitleList = "";
 		List<String> roomTitles = Collections.list(rooms.keys());
@@ -42,24 +64,39 @@ public class ChatServer {
 		return roomsTitleList;
 	}
 
-	public List getRoomsList() {
+	/**
+	 * rooms 객체의 value(방 객체)들을 List에 담아 반환하는 Getter 메서드
+	 * 
+	 * @return List<Room>
+	 */
+	public List<Room> getRoomsList() {
 		List<Room> roomsList = new ArrayList<Room>();
 		roomsList.addAll(rooms.values());
 		return roomsList;
 	}
-	
-	public List<Client> getRoomClientsList(String roomTitle) {
 
+	/**
+	 * 특정 대화방 안의 인원들을 List에 담아 반환하는 Getter 메서드
+	 * 
+	 * @param roomTitle
+	 * @return List<Client>
+	 */
+	public List<Client> getJoinClientsList(String roomTitle) {
 		List<Client> clientList = new ArrayList<Client>();
 		Room room = rooms.get(roomTitle);
-		
+
 		if (room != null) {
 			clientList.addAll(room.getClientsList());
 		}
 
 		return clientList;
 	}
-	
+
+	/**
+	 * 대기 인원들을 List에 담아 반환하는 Getter 메서드
+	 * 
+	 * @return List<Client>
+	 */
 	public List<Client> getOutClientsList() {
 		List<Client> list = new ArrayList<Client>();
 		Enumeration<Client> e = outClients.elements();
@@ -68,38 +105,64 @@ public class ChatServer {
 		}
 		return list;
 	}
-	
-	public HashMap<String, Client> getAllClientsList() {
-		HashMap<String, Client> clientsList = new HashMap<>();
-		List<Room> list = new ArrayList<Room>();
-		List<Client> list2 = new ArrayList<Client>();
+
+	/**
+	 * 대기 인원, 접속 인원 모두를 Hashtalbe에 담아 반환하는 Getter 메서드 
+	 * 동기화 처리를 위해 Hashtable 사용
+	 * 
+	 * @return Hashtable<String, Client>
+	 */
+	public Hashtable<String, Client> getAllClientsList() {
 		Room room = null;
+		Hashtable<String, Client> clientsList = new Hashtable<>();
+		// 룸 객체들을 받을 list 선언
+		List<Room> roomList = new ArrayList<Room>();
+		// 룸 객체들의 접속 인원을 받을 list2
+		List<Client> roomClients = new ArrayList<Client>();
+
 		if (!rooms.values().isEmpty()) {
-			list.addAll(rooms.values());
-
-			for (int i = 0; i < list.size(); i++) {
-				room = (Room) list.get(i);
-				list2.addAll(room.getClientsList());
+			roomList.addAll(rooms.values());
+			// room 객체들 저장
+			for (int i = 0; i < roomList.size(); i++) {
+				room = (Room) roomList.get(i);
+				roomClients.addAll(room.getClientsList());
 			}
-
-			for (int i = 0; i < list2.size(); i++) {
-				Client client = (Client) list2.get(i);
+			// room 객체들의 clients 저장
+			for (int i = 0; i < roomClients.size(); i++) {
+				Client client = (Client) roomClients.get(i);
 				clientsList.put(client.getNickName(), client);
 			}
 		}
+		// 대기 인원 저장
 		clientsList.putAll(outClients);
 
 		return clientsList;
 	}
 
-	public int getRoomClientCount(String roomTitle) {
-		return getRoomClientsList(roomTitle).size();
+	/**
+	 * 특정 대화방 접속 인원수를 반환하는 메서드
+	 * 
+	 * @param roomTitle
+	 * @return String
+	 */
+	public int getJoinClientCount(String roomTitle) {
+		return getJoinClientsList(roomTitle).size();
 	}
-	
+
+	/**
+	 * 대기 인원수를 반환하는 메서드
+	 * 
+	 * @return int
+	 */
 	public int getOutClientsCount() {
 		return outClients.size();
 	}
 
+	/**
+	 * 개설된 방들의 제목을 나열한 String을 반환하는 메서드
+	 * 
+	 * @return String
+	 */
 	public String getRoomsListString() {
 		String result = "";
 		String key = "";
@@ -110,7 +173,12 @@ public class ChatServer {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * 대기실에 있는 인원들을 나열한 String을 반환하는 메서드
+	 * 
+	 * @return String
+	 */
 	public String outClientsString() {
 		String result = "";
 		Enumeration<String> e = outClients.keys();
@@ -121,21 +189,38 @@ public class ChatServer {
 		return result;
 	}
 
+	/**
+	 * 특정 대기실의 인원들을 나열한 String을 반환하는 메서드
+	 * 
+	 * @param roomTitle
+	 * @return String
+	 */
 	public String joinClientsString(String roomTitle) {
 		String result = "";
 		Room room = null;
 		room = rooms.get(roomTitle);
-		List<Client> list = room.getClientsList(); 
+		List<Client> list = new ArrayList<Client>();
+		list = room.getClientsList();
 		for (Client client : list) {
 			result += (client.getNickName() + Protocol.DELEMETER_SUB);
 		}
 		return result;
 	}
-	
+
+	/**
+	 * 스레드의 동작 여부를 판단하는 메서드
+	 * 
+	 * @return boolean
+	 */
 	public boolean isRunning() {
 		return running;
 	}
 
+	/**
+	 * 서버 접속 시, 소켓을 연결하고 Client 객체를 생성하는 메서드
+	 * 
+	 * @throws IOException
+	 */
 	public void startUp() throws IOException {
 		try {
 			serverSocket = new ServerSocket(PORT);
@@ -144,15 +229,13 @@ public class ChatServer {
 		}
 
 		running = true;
+		// 대기실 인원, 대화방들을 관리하기 위한 해쉬테이블
 		outClients = new Hashtable<String, Client>();
 		rooms = new Hashtable<String, Room>();
-
-		System.out.println("BTS[" + PORT + "] ChatServer Start....");
 
 		while (running) {
 			try {
 				Socket socket = serverSocket.accept();
-				System.out.println("connect from [" + socket.getInetAddress() + "]");
 				Client client = new Client(socket, this);
 				client.start();
 
@@ -162,23 +245,45 @@ public class ChatServer {
 		}
 	}
 
-	// 방 추가
+	/**
+	 * 방 생성 메서드
+	 * 
+	 * @param nickName
+	 * @param roomTitle
+	 * @param maxPeople
+	 * @param client
+	 */
 	public void addRoom(String nickName, String roomTitle, int maxPeople, Client client) {
+		// 방 생성
 		Room room = new Room(nickName, roomTitle, maxPeople);
+		// 방을 생성한 참가자를 방의 인원에 추가
 		room.addClientsList(client);
+		// 방들을 관리하는 해쉬테이블에 방 추가
 		rooms.put(roomTitle, room);
+		// 방을 만든 인원을 대기인원에서 제거
 		outClients.remove(client.getNickName());
 	}
 
+	/**
+	 * 대기 인원 추가 메서드
+	 * 
+	 * @param client
+	 */
 	public void addOutClient(Client client) {
 		outClients.put(client.getNickName(), client);
 	}
-	
-	// 오버로딩 방에 있는 애들 삭제
-	public boolean removeClient(Client client, String roomTitle) {
-		Room room = rooms.get(roomTitle);			
+
+	/**
+	 * 대화방 인원 삭제 메서드
+	 * 
+	 * @param client
+	 * @param roomTitle
+	 * @return boolean
+	 */
+	public boolean removeRoomClient(Client client, String roomTitle) {
+		Room room = rooms.get(roomTitle);
 		room.removeClientsList(client);
-		
+		// 대화방 인원 삭제 후, 참여 인원이 없을 경우 room을 삭제합니다.
 		if (room.getClientsCount() == 0) {
 			rooms.remove(roomTitle);
 			return false;
@@ -186,11 +291,18 @@ public class ChatServer {
 		return true;
 	}
 
-	public void removeClient(Client client) {
+	/**
+	 * 대기 인원 삭제 메서드
+	 * 
+	 * @param client
+	 */
+	public void removeOutClient(Client client) {
 		outClients.remove(client.getNickName(), client);
 	}
 
 	/**
+	 * 대화방 참가 메서드 
+	 * 참여자를 대화방에 추가 후, 대기 인원에서 삭제합니다.
 	 * 
 	 * @param roomTitle
 	 * @param client
@@ -198,34 +310,49 @@ public class ChatServer {
 	public void joinRoom(String roomTitle, Client client) {
 		rooms.get(roomTitle).addClientsList(client);
 		outClients.remove(client.getNickName());
-		
-		System.out.println("들어온 방 : " + rooms.get(roomTitle).getRoomTitle() + 
-				" 방 인원 : " + rooms.get(roomTitle).getClientsList().size() + 
-				" 벡터 사이즈 : " + rooms.get(roomTitle).getClientsCount() +
-				" 입장한 사람들 : " + joinClientsString(roomTitle)+ "\n");
 	}
 
+	/**
+	 * 대화방 삭제 메서드
+	 * 
+	 * @param room
+	 */
 	public void removeRoom(Room room) {
 		rooms.remove(room.getRoomTitle(), room);
 	}
 
+	/**
+	 * 대화방 나가기 메서드
+	 * 
+	 * @param client
+	 * @param roomTitle
+	 */
 	public void exitRoom(Client client, String roomTitle) {
-//		조인, 아웃일 경우
+		// 참여자가 속한 방을 가져옵니다.
 		Room room = rooms.get(roomTitle);
+		// 대기 인원에 인원을 추가합니다.
 		outClients.put(client.getNickName(), client);
+
+		// 이 후, 방이 존재하면 방의 참여 목록에서 참여자를 삭제합니다.
 		if (room != null) {
 			room.removeClientsList(client);
 		}
 
-		System.out.println("방안의 인원 : " + getRoomClientCount(roomTitle) + " 밖의 인원 : " + getOutClientsCount() + "\n");
-		if (getRoomClientCount(roomTitle) == 0) {
+		// 방에 속한 사람이 없을 경우, 방을 삭제합니다.
+		if (getJoinClientCount(roomTitle) == 0) {
 			rooms.remove(roomTitle);
 		}
 	}
 
+	/**
+	 * 전체 인원 메세지 메서드
+	 * 
+	 * @param message
+	 */
 	public void sendAllMessage(String message) {
 		Client client;
-		List<Client> list = new ArrayList();
+		List<Client> list = new ArrayList<Client>();
+		// 전체 인원들의 목록을 list에 담습니다.
 		list.addAll(getAllClientsList().values());
 		for (int i = 0; i < list.size(); i++) {
 			client = (Client) list.get(i);
@@ -233,31 +360,57 @@ public class ChatServer {
 		}
 	}
 
+	/**
+	 * 귓속말 메서드
+	 * 
+	 * @param message
+	 * @param nickName
+	 */
 	public void sendPrivateMessage(String message, String nickName) {
 		Client client = (Client) getAllClientsList().get(nickName);
 		client.sendMessage(message);
 	}
 
+	/**
+	 * 대기인원에게만 메세지를 보내는 메서드
+	 * 
+	 * @param message
+	 */
 	public void sendOutMessage(String message) {
 		Enumeration<Client> e = outClients.elements();
 		Client client = null;
-		while(e.hasMoreElements()) {
+		
+		// 해쉬테이블에 있는 대기인원들에게 메세지를 보냅니다.
+		while (e.hasMoreElements()) {
 			client = e.nextElement();
 			client.sendMessage(message);
 		}
 	}
 
+	/**
+	 * 대화방 참여 인원에게만 메세지를 보내는 메서드
+	 * 
+	 * @param message
+	 * @param roomTitle
+	 */
 	public void sendJoinMessage(String message, String roomTitle) {
 		Client client = null;
 		List<Client> list = new ArrayList<Client>();
-		
-		list.addAll(getRoomClientsList(roomTitle));
+
+		// 특정 방의 인원을 list에 담습니다.
+		list.addAll(getJoinClientsList(roomTitle));
 		for (int i = 0; i < list.size(); i++) {
 			client = (Client) list.get(i);
 			client.sendMessage(message);
 		}
 	}
 
+	/**
+	 * 중복 닉네임 검사 메서드
+	 * 
+	 * @param nickName
+	 * @return boolean
+	 */
 	public boolean isExistNickName(String nickName) {
 		return getAllClientsList().containsKey(nickName);
 	}
