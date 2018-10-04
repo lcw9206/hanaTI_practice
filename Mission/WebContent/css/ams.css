@@ -15,6 +15,7 @@ ul {
 	padding: 3% 0;
 	text-align: center;
 	font-size: 24px;
+	border-bottom: solid 2px #ffffff;
 }
 
 @media all and (max-width: 420px) {
@@ -35,7 +36,7 @@ ul {
 }
 
 #ams {
-	margin: 0;
+	margin: 3% 0 0 0;
 	padding: 1px;
 	border-radius: 5px; 
 }
@@ -48,14 +49,17 @@ ul {
 #ams_top > ul > li {
 	position: relative;
 	padding: 4px 0;
-	margin: 1px 0;
 	border-radius: 5px;
 	list-style: none; 
 	width: 100%;
 }
 
-/* 각 행에 속하는 left, right 요소 크기 지정 */
-#ams_top > ul > li > label, .account_type {
+#ams_top > ul > .account_type_list {
+	padding: 1% 0 2% 0;
+}
+
+
+#ams_top > ul > li > label {
 	padding-left: 5%;
 }
 
@@ -69,7 +73,7 @@ ul {
 	transition: all 0.5s linear;
 }
 
-#ams_top > ul > li > input[type="submit"]:hover, input[type="reset"]:hover {
+input[type="submit"]:hover, input[type="reset"]:hover {
 	cursor: pointer;
 	font-weight: bold;
 	border-color: black;

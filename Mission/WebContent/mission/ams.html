@@ -14,7 +14,7 @@
         <section id="ams_top">
           <ul>
             <li class="text_list"><label>계좌종류</label></li>
-            <li><select name="account_type"
+            <li class="account_type_list"><select name="account_type"
               class="account_type" required>
                 <option value="">선택하세요.</option>
                 <option value="general_type">입출금계좌</option>
@@ -34,11 +34,11 @@
               <input type="submit" class="name_find" value="검색">
             </li>
             <li><input type="text"
-              class="account_name input_form" pattern="[가-힣]{2,5}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}" title="한글, 영문 이름 모두 사용가능합니다." placeholder="한글, 영문이름 모두 가능"> </li>
+              class="account_name input_form" pattern="[가-힣]{2,5}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}" title="한글, 영문 모두 가능합니다." placeholder="한글, 영문 모두 가능합니다."> </li>
           </ul>
           <ul>
             <li class="text_list"><label>비밀번호</label></li>
-            <li><input type="text"
+            <li><input type="password"
               class="passwd input_form" pattern="[0-9]{4}" title="숫자 4자리를 입력해주세요." placeholder="비밀번호는 4자리입니다."></li>
           </ul>
           <ul>
