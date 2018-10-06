@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../css/ams.css">
+<script type="text/javascript" src="../js/Account.js"></script>
+<script type="text/javascript" src="../js/MinusAccount.js"></script>
+<script type="text/javascript" src="../js/AccountManager.js"></script>
+<title></title>
+</head>
+<body>
+  <div id="main">
+    <header id="header">
+      <h2>계좌 관리 시스템</h2>
+    </header>
+    <section id="ams">
+      <form action="" method="get">
+        <section id="ams_top">
+          <ul>
+            <li class="text_list"><label>계좌종류</label></li>
+            <li class="account_type_list"><span><input
+                type="radio" name="check_type" value="입출금계좌">입출금계좌</span>
+              <input type="radio" name="check_type" value="마이너스계좌">마이너스계좌
+            </li>
+          </ul>
+          <ul>
+            <li class="text_list"><label>계좌번호</label> <input
+              type="submit" class="number_find" value="조회"> <input
+              type="submit" class="account_delete" value="삭제"></li>
+            <li><input type="text"
+              class="account_number input_form"
+              pattern="\d{4}\-\d{4}\-\d{4}"
+              title="'-'를 포함해 14자리로 입력해야합니다."
+              placeholder="0000-0000-0000" required></li>
+          </ul>
+          <ul>
+            <li class="text_list"><label>예금주명</label> <input
+              type="submit" class="name_find" value="검색"></li>
+            <li><input type="text" class="account_name input_form"
+              pattern="[가-힣]{2,5}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}"
+              title="한글, 영문 모두 가능합니다." placeholder="한글, 영문 모두 가능합니다.">
+            </li>
+          </ul>
+          <ul>
+            <li class="text_list"><label>비밀번호</label></li>
+            <li><input type="password" class="passwd input_form"
+              pattern="[0-9]{4}" title="숫자 4자리를 입력해주세요."
+              placeholder="비밀번호는 4자리입니다."></li>
+          </ul>
+          <ul>
+            <li class="text_list"><label>입금금액</label></li>
+            <li><input type="text" class="input_money input_form"
+              pattern="[1-9]{1}[0-9]{2,10}" title="100원 이상 입금이 가능합니다."
+              placeholder="100원 이상 입금 가능합니다."></li>
+          </ul>
+          <ul>
+            <li class="text_list"><label>대출금액</label> <input
+              type="submit" class="create_account" value="신규등록">
+              <input type="submit" class="list_all" value="전체조회">
+            </li>
+            <li><input type="text" class="output_money input_form"
+              pattern="[1-9]{1}[0-9]{2,10}" title="100원 이상 대출이 가능합니다."
+              placeholder="100원 이상 대출 가능합니다." required></li>
+          </ul>
+          <ul></ul>
+        </section>
+      </form>
+      <section id="ams_bottom">
+        <ul class="inform_text">
+          <li class="inform_text_left"><label>계좌목록</label></li>
+          <li class="inform_text_right"><label>(단위:원)</label></li>
+        </ul>
+        <table class="account_table">
+          <thead>
+            <tr>
+              <td>계좌종류</td>
+              <td>계좌번호</td>
+              <td>예금주명</td>
+              <td>현재잔액</td>
+              <td>대출금액</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>입출금계좌</td>
+              <td>123</td>
+              <td>이철우</td>
+              <td>0</td>
+              <td>50000</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+  </div>
+</body>
+</html>

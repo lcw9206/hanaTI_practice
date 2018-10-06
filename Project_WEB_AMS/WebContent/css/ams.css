@@ -1,0 +1,126 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css?family=Gaegu:700&subset=korean');
+
+
+@media all and (max-width: 420px) {
+  #header {
+    font-size: 20px;
+  }
+}
+
+body {
+	font-family: 'Gaegu', cursive;
+	font-size: 21px;
+}
+
+ul {
+	padding: 0;
+	margin: 0;
+}
+
+#header {
+	padding: 3% 0;
+	text-align: center;
+	font-size: 24px;
+	border-bottom: solid 2px #ffffff;
+}
+
+#header > h2 {
+	margin: 0;
+}
+
+#main {
+	width: 70%;
+	margin: 0 auto;
+	background-color: #f2f2f2;
+	border-radius: 5px;	
+}
+
+#ams {
+	margin: 3% 0 0 0;
+	padding: 1px;
+	border-radius: 5px; 
+}
+
+#ams_bottom {
+	margin-bottom: 3%;
+}
+
+/* ams_top start */
+#ams_top > ul > li {
+	position: relative;
+	padding: 4px 0;
+	border-radius: 5px;
+	list-style: none; 
+	width: 100%;
+}
+
+#ams_top > ul > .account_type_list {
+	padding: 1% 0 2% 0;
+	margin-left: 5%;
+}
+
+
+#ams_top > ul > li > label {
+	padding-left: 5%;
+}
+
+#ams_top > ul > li > .account_type {
+	margin-left: 5%;
+}
+
+#ams_top > ul > li > input[type="submit"] {
+	border-radius: 5px; 
+	padding: 1% 2%;
+	transition: all 0.5s linear;
+}
+
+input[type="submit"]:hover, input[type="reset"]:hover, input[type="radio"] {
+	cursor: pointer;
+	font-weight: bold;
+	border: solid 3px black;
+}
+
+.input_form {
+	width: 90%;
+    padding: 2%;
+    margin: 1% 5%;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+/* ams_bottom start */
+
+.inform_text > li{
+	display: inline-block;
+}
+
+
+.inform_text > .inform_text_left {
+	padding: 2% 0 2% 6%;
+}
+.inform_text > .inform_text_right {
+	float: right;
+	clear: both;
+	padding: 2% 6% 2% 0;
+}
+
+.account_table {
+	border: 1px solid black;
+	margin: 0 auto; 
+	width: 90%;
+	border-radius: 5px; 
+}
+
+.account_table > * > tr > td {
+	border: 1px solid black;
+	text-align: center;
+	border-radius: 5px; 
+}
+
+.account_table > thead > tr > td {
+	color: black;
+}

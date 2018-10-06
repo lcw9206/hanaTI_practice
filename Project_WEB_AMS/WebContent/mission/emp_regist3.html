@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+</head>
+<body>
+  <form action="" method="get" style="width: 600px;">
+    <table border="1" style="width: 600px;">
+      <caption>신규사원 등록</caption>
+      <thead>
+        <tr>
+          <td>계좌종류</td>
+          <td><select name="account_type" required>
+              <option>선택하세요.</option>
+              <option>입출금계좌</option>
+              <option>마이너스계좌</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>계좌번호</td>
+          <td><input type="text" name="account_number" required>
+            <input type="submit" value="가입"> <input type="reset"
+            value="취소"></td>
+        </tr>
+        <tr>
+          <td>예금주명</td>
+          <td><input type="text" name="account_name" required>
+            <input type="submit" value="검색"></td>
+        </tr>
+        <tr>
+          <td>비밀번호</td>
+          <td><input type="text" name="password" required>
+            입금금액 <input type="text" name="input_money" required>
+          </td>
+        </tr>
+        <tr>
+          <td>대출금액</td>
+          <td><input type="text" name="account_number" required>
+            <input type="submit" value="신규등록"> <input
+            type="reset" value="전체조회"></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="2">
+            계좌목록 (단위: 원)
+           
+            <table border="1" style="width: 600px;">
+              <thead>
+                <tr>
+                  <td>계좌종류</td>
+                  <td>계좌번호</td>
+                  <td>예금주명</td>
+                  <td>현재잔액</td>
+                  <td>대출금액</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>입출금계좌</td>
+                  <td>123</td>
+                  <td>이철우</td>
+                  <td>0</td>
+                  <td>50000</td>
+                </tr>
+              </tbody>
+            </table>
+      </tbody>
+    </table>
+  </form>
+</body>
+</html>
