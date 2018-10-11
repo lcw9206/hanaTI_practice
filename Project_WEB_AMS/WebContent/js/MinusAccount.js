@@ -1,5 +1,6 @@
 /**
  * JavaScript를 이용한 MinusAccount 클래스 구현
+ * author 이철우
  */
 
 // 마이너스 계좌 생성자

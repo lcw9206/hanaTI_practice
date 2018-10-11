@@ -3,7 +3,18 @@
 
 body {
 	font-family: 'Gaegu', cursive;
-	font-size: 21px;
+	font-size: 24px;
+}
+
+header {
+	padding: 3% 0;
+	text-align: center;
+	font-size: 26px;
+	border-bottom: solid 2px #ffffff;
+}
+
+header > h2 {
+	margin: 0;
 }
 
 ul {
@@ -11,15 +22,24 @@ ul {
 	margin: 0;
 }
 
-#header {
-	padding: 3% 0;
-	text-align: center;
-	font-size: 24px;
-	border-bottom: solid 2px #ffffff;
+@media all and (max-width: 860px) {
+  #header {
+  	font-size: 20px;
+  }
+  
+  #ams {
+  	font-size: 15px;
+  }
 }
 
-#header > h2 {
-	margin: 0;
+@media all and (max-width: 500px) {
+  #header {
+  	font-size: 24px;
+  }
+  
+  #ams {
+  	font-size: 11px;
+  }
 }
 
 #main {
@@ -30,7 +50,7 @@ ul {
 }
 
 #ams {
-	margin: 3% 0 0 0;
+	margin-top: 3%;
 	padding: 1px;
 	border-radius: 5px; 
 }
@@ -39,52 +59,15 @@ ul {
 	margin-bottom: 3%;
 }
 
-@media all and (max-width: 420px) {
-  #header {
-  	font-size: 20px;
-  }
-  
-  #ams {
-  	font-size: 19px;
-  }
-}
-
 /* ams_top start */
-#ams_top > ul > li {
-	position: relative;
-	padding: 4px 0;
-	border-radius: 5px;
-	list-style: none; 
-	width: 100%;
-}
-
-#ams_top > ul > .account_type_list {
-	padding: 1% 0 2% 0;
-	margin-left: 5%;
-}
-
-
-#ams_top > ul > li > label {
-	padding-left: 5%;
-}
-
-#ams_top > ul > li > .account_type {
-	margin-left: 5%;
-}
-
-#ams_top > ul > li > input[type="submit"] {
-	border-radius: 5px; 
-	padding: 1% 2%;
-	transition: all 0.5s linear;
-}
 
 input[type="submit"]:hover, input[type="reset"]:hover, input[type="radio"] {
 	cursor: pointer;
 	font-weight: bold;
-	border: solid 3px black;
+	border: solid 2px black;
 }
 
-.input_form {
+input[type="text"], input[type="password"] {
 	width: 90%;
     padding: 2%;
     margin: 1% 5%;
@@ -94,45 +77,82 @@ input[type="submit"]:hover, input[type="reset"]:hover, input[type="radio"] {
     box-sizing: border-box;
 }
 
-.list_all {
-	float : right;
-	margin : 0 1% 0 0;
+#ams_top > ul > li {
+	position: relative;
+	padding: 4px 0;
+	border-radius: 5px;
+	list-style: none; 
+	width: 100%;
+}
+
+#ams_top > ul > li > .comment_list {
+	padding-left: 5%;
+}
+
+#ams_top > ul > li > input[type="submit"] {
+	border-radius: 5px; 
+	padding: 1% 2%;
+	transition: all 0.5s linear;
+	float: right;
+}
+
+#list_all, #account_delete {
+	margin-right: 1%;
 } 
 
-.create_account { 
-	float : right;
-	margin : 0 5% 0 0;
+#create_account, #number_find, #name_find { 
+	margin-right: 5%;
+}
+
+#ams_top > ul > #account_type_list {
+	display: initial;
+}
+
+.account_type {
+	padding-left: 5%;
+	margin: 2% 1% 2% 0;
+}
+
+.line_modulate {
+	visibility: hidden;
+}
+
+.error_comment {
+	visibility: hidden;
+	font-size: 15px;
+	color: red;
 }
 
 /* ams_bottom start */
 
-.inform_text > li{
-	display: inline-block;
-}
-
-
-.inform_text > .inform_text_left {
-	padding: 2% 0 2% 6%;
-}
-.inform_text > .inform_text_right {
-	float: right;
-	clear: both;
-	padding: 2% 6% 2% 0;
-}
-
-.account_table {
+#account_table {
 	border: 1px solid black;
 	margin: 0 auto; 
 	width: 90%;
 	border-radius: 5px; 
 }
 
-.account_table > * > tr > td {
+#account_table > * > tr > td {
 	border: 1px solid black;
 	text-align: center;
 	border-radius: 5px; 
 }
 
-.account_table > thead > tr > td {
+#account_table > thead > tr > td {
 	color: black;
 }
+
+.inform_text > li{
+	display: inline-block;
+}
+
+.inform_text > .inform_text_left {
+	padding: 2% 0 2% 6%;
+}
+
+.inform_text > .inform_text_right {
+	float: right;
+	clear: both;
+	padding: 2% 6% 2% 0;
+}
+

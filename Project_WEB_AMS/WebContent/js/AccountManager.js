@@ -1,5 +1,9 @@
 /**
- * JavaScript를 이용한 AccountManager 클래스 구현
+ * 
+ * JavaScript를 이용한 AccountManager 클래스 구현 
+ * 반환 계좌가 필요한 메서드를 제외하고 true/false를 반환합니다.
+ * author 이철우
+ * 
  */
 
 // 생성자
@@ -24,8 +28,10 @@ AccountManager.prototype.add = function(account) {
 
 // 전체 계좌 목록 출력 메서드
 AccountManager.prototype.listAll = function() {
-	for ( var key in this.accounts) {
-		console.log(key + ' : ' + this.accounts[key].toString() + '<br>');
+	if (this.accounts.length) {
+		return this.accounts;
+	} else {
+		return false;
 	}
 }
 
@@ -37,26 +43,26 @@ AccountManager.prototype.searchOwner = function(accountOwner) {
 			ownerAccounts.push(this.accounts[key]);
 		}
 	}
-
 	if (ownerAccounts.length) {
 		return ownerAccounts;
 	}
-
 	return false;
 }
 
 // 계좌번호 기준 계좌 검색 메서드
 AccountManager.prototype.searchNumber = function(accountNumber) {
+	var numberAccount = [];
 	for ( var key in this.accounts) {
 		if (this.accounts[key].accountNum == accountNumber) {
-			return this.accounts[key];
+			numberAccount.push(this.accounts[key]);
+			return numberAccount;
 		}
 	}
 	return false;
 }
 
 // 계좌 삭제 메서드
-AccountManager.prototype.removeNumber = function(accountNumber) {
+AccountManager.prototype.remove = function(accountNumber) {
 	for ( var key in this.accounts) {
 		if (this.accounts[key].accountNum == accountNumber) {
 			// delete 메서드는 배열크기까지 삭제되지 않기에 splice 메서드 사용
