@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+</head>
+<body>
+<h2>DOM 이란</h2>
+<p>자리돔이 최고여...</p>
+<h2>BOM 이란</h2>
+<p>자리돔이 최고여...</p>
+<h2>EVENT 이란</h2>
+<p>자리돔이 최고여...</p>
+
+<script type="text/javascript">
+	/* DOM API를 이용한 DOM 객체 접근 */
+	var array = document.getElementsByTagName('h2');
+	
+	/* forin 문을 이용해 객체의 생성자를 보려고하면 객체의 생성자 이외에도 구성 요소가 함께 출력된다.
+	따라서 forin보다 for문으로 돌려서 확인하는 것이 훨씬 정확하다. */
+	console.log("=========forin문==========");
+	for ( var key in array) {
+		var obj = array[key];
+		console.log(obj.constructor);
+	}
+	
+	console.log("=========for문==========");
+	for (var i = 0; i < array.length; i++) {
+		var obj = array[i];
+		obj.style = "color:red";
+		console.log(obj.constructor);
+	}
+	
+</script>
+</body>
+</html>

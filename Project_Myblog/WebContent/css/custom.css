@@ -1,0 +1,228 @@
+/*!
+ * Custom Css
+ */
+
+/* 공통부분 */
+
+table {    
+	
+    border-collapse: collapse;
+    padding-left: 10px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.container {
+	margin: 0 auto;
+	font-size: 14px;
+}
+
+.main {
+	margin-top: 5%; 
+}
+
+input[type="text"], input[type="button"], input[type="submit"], textarea, button {
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* navigator.jsp & navi-header.jsp  */
+
+.nav-input {
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+#mainNav .navbar-nav > li.id-content > a {
+	font-size: 15px;
+}
+
+#login-form {
+	text-align: center;
+	margin: 8px 40px 0 120px;
+}
+
+.blank {
+	visibility: hidden;
+}
+
+.home-icon {
+	color: white;
+	margin-right: 70px;
+}
+
+.nav-link {
+	margin-right: 30px;
+}
+
+#logout-form {
+	margin: 8px 150px 0 200px;
+}
+
+.nav-logout {
+	margin: 0 20px;
+}
+
+/* addUser.jsp */
+.id-inspection {
+	z-index: 2;
+	position: absolute;
+	margin-top: 60px;
+	margin-left: 320px;	
+}
+
+.addUser-inform-text {
+	margin-top: 30px;
+}
+
+.error_comment {
+	visibility: hidden;
+	font-size: 15px;
+	color: red;
+	margin-left: 10px;
+}
+
+#addUserSubText {
+	margin-left: 10px;
+	color: #787a7b;
+}
+
+/* addUserOk.jsp */
+.ok-text {
+	color: red;
+	margin: 30px 0;
+}
+
+.inform-text {
+	font-size: 22px;
+	font-weight: 800;
+}
+
+.inform-list {
+	font-size: 1rem;
+	display: inline-block;
+	width: 100%;
+	position: relative;
+	z-index: 1;
+	padding: 0;
+	resize: none;
+	border: none;
+	border-radius: 0;
+	background: none;
+	box-shadow: none !important;
+}
+
+/* post.jsp */
+
+#add-post {
+	position: absolute;
+	padding: 24px;
+}
+
+#add-post:hover, #post-delete:hover {
+	background-color: #ccc;
+}
+
+#post-box {
+	width: 90%;
+}
+
+.post-table {
+	width: 100%;
+}
+
+.delete-button {
+	text-align: center;
+}
+
+.article-list, .reply-article, .article-modify {
+	float: right;
+	margin: 10px 3px 0 0;
+}
+
+/* findUser.jsp */
+#findId, #findPw {
+	text-decoration: none;
+}
+
+/* board.jsp */
+nav > .pagination {
+	display: inline;
+	font-size: 14px;
+}
+
+.board-table {
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.board-right {
+	position: fixed;
+	left: 550px;
+}
+
+.board-right, .board-right > form {
+	display: inline-block;
+	margin: 3px 0 0 60px;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+#find-option {
+	margin-left: 150px;
+	width: 15%;
+}
+
+#searchValue {
+	width: 150px;
+}
+
+.board-left {
+	display: inline;
+}
+
+/* createArticle.jsp */
+.add-article {
+	float: right;
+	margin: 10px 5px 0 0;
+}
+
+.article-text {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.article-input {
+	width: 100%;
+	margin-right: 120px;
+}
+
+/* guestBook.jsp */
+.guestbook-title-text {
+	display: inline-block;
+	margin-top: 28px;
+}
+
+.guestBook-inform-text {
+	display: inline-block;
+}
+
+.sub-text {
+	font-size: 16px;
+	color: #ccc;
+	margin-left: 10px;
+}

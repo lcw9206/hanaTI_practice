@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DOM 이해</title>
+</head>
+
+<body>
+  <span id="mySpan">스판입니다..</span>
+  <div>비다이드1입니다.</div>
+	<div>비다이드2입니다.</div>
+	<input type="text" name="userId" >
+
+<script type="text/javascript">
+	console.log("브라우저에 의해 BOM과 DOM이 생성 완료됨...");
+	
+	//alert(document.nodeType);
+	
+	// 현재 문서의 <html> 엘리먼트를 접근하고 싶어요..
+	// document.childNodes[0];와 같다. 
+	var rootE = window.document.documentElement;
+	//var rootE = document.documentElement;
+	console.log(rootE.constructor);
+	console.log(rootE.nodeName);
+	console.log(rootE.nodeType);
+	console.log(rootE.nodeValue);
+	
+	console.log(window.document.nodeName);
+	
+	// html 엘리먼트의 자식 엘리먼트들 접근하기..
+	// nodeList는 Array를 확장한 것이다. 배열이 아니다!
+	var nodeList = rootE.childNodes;
+	console.log(nodeList.constructor);
+	// 공백문자를 TEXT로 보기때문에 text가 자식으로 들어간다.
+	//
+	console.log("html 엘리먼트의 자식엘리먼트 수: " + nodeList.length);
+	// 밑과 같이 노드 리스트를 출력하면 공백문자까지 포함해 나오게 된다.
+	// 따라서 nodeType을 이용해 비교를 해줘야 정확하다.
+	for ( var i=0; i<nodeList.length; i++) {
+		console.log(i + " : " + nodeList[i]);
+	}
+	var e = window.document.getElementById("mySpan");
+	console.log(e.constructor);
+	console.log(e.nodeType);
+	console.log(e.nodeName);
+	console.log(e.nodealue);
+
+	var array = document.getElementsByTagName("div");
+	console.log(array.length);
+	//for (var i = 0; i < array.length; i++) {
+	for (var i = 0; i < array.length; i++) {
+		var e = array.item(i);
+		// 계층적 구조 참조를 위한 프로퍼티
+		//console.log(e.nodeName);
+		//e.childeNodes[0].nodeValue;
+		var text = e.firstChild;
+		/* var text = e.lastChild; */
+		
+		console.log(text.constructor);
+		console.log(text.nodeType);
+		console.log(text.nodeName);
+		console.log(text.nodeValue);
+	}
+
+	// 주로 form에서 사용 
+	var array = document.getElementsByName("userId");
+	console.log(array.constructor);
+	var input = array.item(0);
+	console.log(input.constructor);
+
+	// 현재문서의 최상위 엘리먼트(html) 접근 속성
+	var htmlE = document.documentElement;
+	console.log(htmlE.nodeType);
+	console.log(htmlE.nodeName);
+	console.log(htmlE.nodeValue);
+	
+	
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>Model2Study</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <!-- Listener 등록 -->
+	<listener>
+		<listener-class>kr.or.kosta.shoppingmall.common.user.listener.ServletContextLoadListener</listener-class>
+	</listener>
+  
+	<context-param>
+  		<param-name>objectMapperLocation</param-name>
+  		<param-value>/Users/mcbookpro/Java/workspace/Model2Study/WebContent/WEB-INF/object-mapper.xml</param-value>
+  	</context-param>
+  
+<!-- 에러(예외) 페이지 설정 -->
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error/error_500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/error/error_400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/error_404.jsp</location>
+	</error-page>
+
+
+ 	<!-- 웹브라우저 모든 요청에 대한 단일 진입점 역할의 Front Controller Servlet(메인서블릿) 등록 -->
+	<servlet>
+		<servlet-name>frontController</servlet-name>
+		<servlet-class>kr.or.kosta.shoppingmall.common.controller.SimpleFrontControllerServlet_V5</servlet-class>
+		<init-param>
+			<param-name>controllerMapperLocation</param-name>
+			<param-value>/Users/mcbookpro/Java/workspace/Model2Study/WebContent/WEB-INF/controller-mapper.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>frontController</servlet-name>
+		<!-- 확장자 형식 매핑 -->
+		<url-pattern>*.mall</url-pattern>
+		<!-- 패스형식 매핑 --> 
+		<!-- <url-pattern>/blog/*</url-pattern> -->
+	</servlet-mapping>
+  
+</web-app>
